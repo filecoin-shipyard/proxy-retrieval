@@ -1,0 +1,25 @@
+{
+  "name": "proxy-retrieval",
+  "version": "1.0.0",
+  "description": "Allow a browser node to retrieve from a storage miner",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mgoelzer/proxy-retrieval.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mgoelzer/proxy-retrieval/issues"
+  },
+  "homepage": "https://github.com/mgoelzer/proxy-retrieval#readme",
+  "dependencies": {
+    "axios": "^0.20.0"
+  }
+}
