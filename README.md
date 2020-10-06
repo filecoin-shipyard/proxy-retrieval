@@ -6,9 +6,9 @@ When the browser wishes to retrieve a file from a Storage Miner, it opens a webs
 
 ![Diagram of Browser and Retrieval Proxy Working Together](docs/RetrievalProxyDiagram.png?raw=true)
 
-## API
+## Retrieval Proxy Protocol
 
-The API is described in this Google Doc:  
+The draft protocol is described in this [Protocol Design Google Doc](https://docs.google.com/document/d/1swBHR9xaFVH5l26wgIRw6pqUlQbYBWeLDLgka-SmC8k/edit). 
 
 As we finalize the first version of the API, that document will be brought into this repo as markdown.
 
@@ -16,7 +16,7 @@ As we finalize the first version of the API, that document will be brought into 
 
 This repo contains all information needed to run an RP server yourself.  See the `docs/` directory.
 
-We welcome contributions in the form of issues and PRs to this repo.  We also have a daily standup at 3pm UTC.  Email [mike@protocol.ai](mike@protocol.ai) if you'd like to join.  Lurkers welcome.
+We welcome contributions in the form of issues and PRs to this repo.  We also have a daily standup at 3pm UTC.  Email [mike@protocol.ai](mike@protocol.ai) or contact `@mike - pl` on [Filecoin Slack](https://filecoin.io/slack) if you'd like to join.  Curious lurkers and serious contributors are equally welcome!
 
 ## License
 
