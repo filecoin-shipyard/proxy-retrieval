@@ -4,7 +4,7 @@ The Retrieval Proxy (RP) server is a simple method of allowing a browser node to
 
 When the browser wishes to retrieve a file from a Storage Miner, it opens a websockets connection to the RP server.  The browser sends the CID it wants and FIL to fund the retrieval to a wallet created on the RP server.  The RP server, which is running a full Lotus daemon instance, then does the requested retrieval and sends the data back to the browser.
 
-![Diagram of Browser and Retrieval Proxy Working Together](/mgoelzer/proxy-retrieval/blob/master/docs/RetrievalProxyDiagram.png?raw=true)
+![Diagram of Browser and Retrieval Proxy Working Together](docs/RetrievalProxyDiagram.png?raw=true)
 
 ## API
 
