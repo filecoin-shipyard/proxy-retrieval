@@ -9,3 +9,7 @@ Thumbs.db
 
 # generated
 *.generated.*
+
+# logs
+**/logs/*
+!**/logs/.gitkeep
