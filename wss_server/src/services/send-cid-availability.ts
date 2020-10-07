@@ -1,6 +1,6 @@
 import * as socketIO from 'socket.io'
 
-export const getCidAvailability = (io: socketIO.Server, message) => {
+export const sendCidAvailability = (io: socketIO.Server, message) => {
   try {
     // TODO: retrieve availability from lotus
     io.emit('cid_availability', {

@@ -2,8 +2,9 @@ import * as chalk from 'chalk'
 import * as socketIO from 'socket.io'
 
 import { config } from './config'
-import { getCidAvailability } from './services/get-cid-availability'
 import { logger } from './services/logger'
+import { sendCidAvailability } from './services/send-cid-availability'
+import { sendFundsConfirmed } from './services/send-funds-confirmed'
 
 const io = socketIO()
 
@@ -13,11 +14,13 @@ io.on('connection', (client) => {
   client.on('query_cid', (message) => {
     logger.log(chalk.blueBright`Got a message from`, client.id, 'message:\n', message)
 
-    getCidAvailability(io, message)
+    sendCidAvailability(io, message)
   })
 
   client.on('funds_confirmed', (message) => {
-    // TODO: here
+    logger.log(chalk.blueBright`Got a message from`, client.id, 'message:\n', message)
+
+    sendFundsConfirmed(io, message)
   })
 })
 
