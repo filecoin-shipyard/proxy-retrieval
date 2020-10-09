@@ -1,29 +1,25 @@
+import axios from 'axios'
+
 import { config } from '../config'
 
-let api = config.lotus.api
-let token = config.lotus.token
+const { api: apiUrl, token } = config.lotus
 
-function LotusCmd(body) {
-  return new Promise(function (resolve, reject) {
-    const axios = require('axios')
-    axios
-      .post(api, body, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        resolve(response.data)
-      })
-      .catch((error) => {
-        reject(error)
-      })
-  })
+const api = axios.create({
+  baseURL: apiUrl,
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  },
+})
+
+const callLotus = async (body) => {
+  const { data } = await api.post(body)
+
+  return data
 }
 
-export const ClientMinerQueryOffer = (miner, dataCid) => {
-  return LotusCmd(
+export const getClientMinerQueryOffer = (miner, dataCid) => {
+  return callLotus(
     JSON.stringify({
       jsonrpc: '2.0',
       method: 'Filecoin.ClientMinerQueryOffer',
@@ -33,8 +29,8 @@ export const ClientMinerQueryOffer = (miner, dataCid) => {
   )
 }
 
-export const ClientRetrieve = (retrievalOffer, outFile) => {
-  return LotusCmd(
+export const getClientRetrieve = (retrievalOffer, outFile) => {
+  return callLotus(
     JSON.stringify({
       jsonrpc: '2.0',
       method: 'Filecoin.ClientRetrieve',
@@ -44,14 +40,16 @@ export const ClientRetrieve = (retrievalOffer, outFile) => {
   )
 }
 
-export const WalletNew = () => {
-  return LotusCmd(JSON.stringify({ jsonrpc: '2.0', method: 'Filecoin.WalletNew', params: [1], id: 0 })) // 1 = KTrashPrefix used for testnet
+export const walletNew = () => {
+  const kTrashPrefix = 1 // used for testnet
+
+  return callLotus(JSON.stringify({ jsonrpc: '2.0', method: 'Filecoin.WalletNew', params: [kTrashPrefix], id: 0 }))
 }
 
-export const WalletBalance = (wallet) => {
-  return LotusCmd(JSON.stringify({ jsonrpc: '2.0', method: 'Filecoin.WalletBalance', params: [wallet], id: 0 }))
+export const walletBalance = (wallet) => {
+  return callLotus(JSON.stringify({ jsonrpc: '2.0', method: 'Filecoin.WalletBalance', params: [wallet], id: 0 }))
 }
 
-export const Version = () => {
-  return LotusCmd(JSON.stringify({ jsonrpc: '2.0', method: 'Filecoin.Version', params: [], id: 0 }))
+export const version = () => {
+  return callLotus(JSON.stringify({ jsonrpc: '2.0', method: 'Filecoin.Version', params: [], id: 0 }))
 }
