@@ -6,4 +6,11 @@ export const config = {
       process.env.LOTUS_TOKEN ||
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.lbKNdZrj1rPbPaeCOBANmMRL7m39SbpfNFuX7qmFcCg',
   },
+  db: {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    port: 5432,
+  },
 }
