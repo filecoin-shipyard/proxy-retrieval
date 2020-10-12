@@ -13,43 +13,39 @@ const api = axios.create({
 })
 
 const callLotus = async (body) => {
-  const { data } = await api.post(body)
+  const { data } = await api.post('/', body)
 
   return data
 }
 
 export const getClientMinerQueryOffer = (miner, dataCid) => {
-  return callLotus(
-    JSON.stringify({
-      jsonrpc: '2.0',
-      method: 'Filecoin.ClientMinerQueryOffer',
-      params: [miner, { '/': dataCid }, null],
-      id: 0,
-    }),
-  )
+  return callLotus({
+    jsonrpc: '2.0',
+    method: 'Filecoin.ClientMinerQueryOffer',
+    params: [miner, { '/': dataCid }, null],
+    id: 0,
+  })
 }
 
 export const getClientRetrieve = (retrievalOffer, outFile) => {
-  return callLotus(
-    JSON.stringify({
-      jsonrpc: '2.0',
-      method: 'Filecoin.ClientRetrieve',
-      params: [retrievalOffer, { Path: outFile, IsCAR: false }],
-      id: 0,
-    }),
-  )
+  return callLotus({
+    jsonrpc: '2.0',
+    method: 'Filecoin.ClientRetrieve',
+    params: [retrievalOffer, { Path: outFile, IsCAR: false }],
+    id: 0,
+  })
 }
 
 export const walletNew = () => {
   const kTrashPrefix = 1 // used for testnet
 
-  return callLotus(JSON.stringify({ jsonrpc: '2.0', method: 'Filecoin.WalletNew', params: [kTrashPrefix], id: 0 }))
+  return callLotus({ jsonrpc: '2.0', method: 'Filecoin.WalletNew', params: [kTrashPrefix], id: 0 })
 }
 
 export const walletBalance = (wallet) => {
-  return callLotus(JSON.stringify({ jsonrpc: '2.0', method: 'Filecoin.WalletBalance', params: [wallet], id: 0 }))
+  return callLotus({ jsonrpc: '2.0', method: 'Filecoin.WalletBalance', params: [wallet], id: 0 })
 }
 
 export const version = () => {
-  return callLotus(JSON.stringify({ jsonrpc: '2.0', method: 'Filecoin.Version', params: [], id: 0 }))
+  return callLotus({ jsonrpc: '2.0', method: 'Filecoin.Version', params: [], id: 0 })
 }
