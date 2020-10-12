@@ -37,15 +37,14 @@ export const insertClient = async (
   clientSecret: string,
   cidRequested: string,
   walletAddress: string,
-  stage: string,
   tempFilePath: string,
 ) => {
   try {
     const poolClient = await pool.connect()
 
     await poolClient.query(`\
-                INSERT INTO clients (client_secret, cid_requested, wallet_address, stage, temp_file_path) \
-                VALUES ('${clientSecret}', '${cidRequested}', '${walletAddress}', '${stage}', '${tempFilePath}')\
+                INSERT INTO clients (client_secret, cid_requested, wallet_address, temp_file_path) \
+                VALUES ('${clientSecret}', '${cidRequested}', '${walletAddress}', '${tempFilePath}')\
                 `)
 
     return poolClient.release()
