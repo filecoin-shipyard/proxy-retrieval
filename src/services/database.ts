@@ -1,25 +1,5 @@
 import { config } from '../config'
-
-type insert = {
-  client_secret: string
-  cid_requested: string
-  wallet_address: string
-  price_attofil: string
-}
-
-type updateStage = {
-  stage: string
-  clientSecret: string
-}
-
-type updateFilePath = {
-  tempFilePath: string
-  clientSecret: string
-}
-type getClient = {
-  clientSecret: string
-  cid: string
-}
+import { insertClientType, updateStageType, updateFilePathType, getClientType } from './types'
 
 const knex = require('knex')({
   client: 'pg',
@@ -50,7 +30,7 @@ export const initDB = () => {
   }
 }
 
-export const insertClient = (args: insert) => {
+export const insertClient = (args: insertClientType) => {
   try {
     return knex('clients').insert(args).then()
   } catch (e) {
@@ -58,7 +38,7 @@ export const insertClient = (args: insert) => {
   }
 }
 
-export const updateClientStage = (args: updateStage) => {
+export const updateClientStage = (args: updateStageType) => {
   try {
     return knex('clients').where('client_secret', args.clientSecret).update('stage', args.stage).then()
   } catch (e) {
@@ -66,7 +46,7 @@ export const updateClientStage = (args: updateStage) => {
   }
 }
 
-export const updateClientFilePath = (args: updateFilePath) => {
+export const updateClientFilePath = (args: updateFilePathType) => {
   try {
     return knex('clients').where('client_secret', args.clientSecret).update('temp_file_path', args.tempFilePath).then()
   } catch (e) {
@@ -74,7 +54,7 @@ export const updateClientFilePath = (args: updateFilePath) => {
   }
 }
 
-export const getClient = async (arg: getClient) => {
+export const getClient = async (arg: getClientType) => {
   try {
     return knex('clients').where('client_secret', arg.clientSecret).andWhere('cid_requested', arg.cid).select().then()
   } catch (e) {
