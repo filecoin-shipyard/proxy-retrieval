@@ -1,9 +1,9 @@
 import * as socketIO from 'socket.io'
 
-export const sendCidAvailability = async (io: socketIO.Server, message) => {
+export const sendCidAvailability = (io: socketIO.Server, message) => {
   try {
     // TODO: retrieve availability from lotus
-    return io.emit('cid_availability', {
+    io.emit('cid_availability', {
       message: 'cid_availability',
       cid: 'bafk2bzacebbhqzi4y546h7gjbduauzha6z33ltequ7hpbvywnttc57xrwcit2',
       client_token: 'HIgP2JW9wHdlTYb89rjEy9/IQDR02EwMvtg4XN5Y/kY=',
