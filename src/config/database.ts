@@ -2,6 +2,10 @@ import * as knex from 'knex'
 import * as path from 'path'
 import { config } from './index'
 
+export const tables = {
+  clients: 'clients',
+}
+
 export const database = {
   client: 'postgresql',
   connection: {
