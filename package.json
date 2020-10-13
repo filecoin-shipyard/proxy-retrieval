@@ -5,7 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "dev": "ts-node-dev --no-notify src/index.ts"
+    "dev": "ts-node-dev --no-notify src/index.ts",
+    "lotus": "ts-node-dev --no-notify src/services/lotus.ts"
   },
   "keywords": [],
   "author": "",
