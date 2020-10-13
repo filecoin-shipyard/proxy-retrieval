@@ -83,7 +83,7 @@ Provision an `m5ad.12xlarge` on AWS.   Give it a root volume size of 1023 GB.  I
 	sudo apt install -y mesa-opencl-icd ocl-icd-opencl-dev make && \
 	sudo add-apt-repository -y ppa:longsleep/golang-backports && \
 	sudo apt update && \
-	sudo apt install -y golang-go gcc git bzr jq pkg-config mesa-opencl-icd ocl-icd-opencl-dev
+	sudo apt install -y golang-go gcc git bzr jq pkg-config mesa-opencl-icd ocl-icd-opencl-dev llvm clang
 ```
 
 - Install Rust:
