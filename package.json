@@ -6,7 +6,9 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "dev": "ts-node-dev --no-notify src/index.ts",
-    "lotus": "ts-node-dev --no-notify src/services/lotus.ts"
+    "lotus": "ts-node-dev --no-notify src/services/lotus.ts",
+    "migrate": "knex migrate:latest --knexfile ./src/db/knexfile.ts",
+    "migrate-make": "knex migrate:make --knexfile ./src/db/knexfile.ts"
   },
   "keywords": [],
   "author": "",

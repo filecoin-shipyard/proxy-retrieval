@@ -1,4 +1,5 @@
-require('dotenv').config()
+import * as dotenv from 'dotenv'
+dotenv.config()
 
 export const config = {
   port: +process.env.PORT || 3000,
@@ -13,6 +14,7 @@ export const config = {
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
-    port: 5432,
   },
 }
+
+export * from './database'
