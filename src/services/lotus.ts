@@ -13,7 +13,7 @@ const api = axios.create({
 })
 
 const callLotus = async (body) => {
-  const { data } = await api.post('', body)
+  const { data } = await api.post('', body, { timeout: 10000 })
 
   return data
 }
