@@ -5,6 +5,12 @@ import { config } from './config'
 import { logger } from './services/logger'
 import { sendCidAvailability } from './services/send-cid-availability'
 import { sendFundsConfirmed } from './services/send-funds-confirmed'
+import { initDB } from './services/database'
+
+// @ts-ignore
+initDB()
+  .then((r) => console.log('DB was init'))
+  .catch((e) => console.log(e))
 
 const io = socketIO()
 

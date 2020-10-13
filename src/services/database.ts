@@ -17,7 +17,7 @@ export const initDB = async () => {
       "\
         CREATE TABLE IF NOT EXISTS clients\
         (\
-            id INT PRIMARY KEY NOT NULL,\
+            id SERIAL PRIMARY KEY NOT NULL,\
             client_secret varchar(100) NOT NULL,\
             cid_requested varchar(100) NOT NULL,\
             wallet_address varchar(100) NOT NULL,\
@@ -33,18 +33,13 @@ export const initDB = async () => {
   }
 }
 
-export const insertClient = async (
-  clientSecret: string,
-  cidRequested: string,
-  walletAddress: string,
-  tempFilePath: string,
-) => {
+export const insertClient = async (clientSecret: string, cidRequested: string, walletAddress: string) => {
   try {
     const poolClient = await pool.connect()
 
     await poolClient.query(`\
-                INSERT INTO clients (client_secret, cid_requested, wallet_address, temp_file_path) \
-                VALUES ('${clientSecret}', '${cidRequested}', '${walletAddress}', '${tempFilePath}')\
+                INSERT INTO clients (client_secret, cid_requested, wallet_address) \
+                VALUES ('${clientSecret}', '${cidRequested}', '${walletAddress}')\
                 `)
 
     return poolClient.release()
@@ -93,18 +88,19 @@ export const updateClientFilePath = async (tempFilePath: string, clientSecret: s
   }
 }
 
-export const getClient = async (clientSecret: string) => {
-  if (!clientSecret) {
-    throw 'Please provide a client secret!'
+export const getClient = async (clientSecret: string, cid: string) => {
+  if (!clientSecret && !cid) {
+    throw 'Please provide a client secret and cid!'
   }
 
   try {
     const poolClient = await pool.connect()
-
-    const client = poolClient.query(`SELECT * FROM clients WHERE client_secret = ${clientSecret}`)
+    const client = await poolClient.query(
+      `SELECT * FROM clients WHERE client_secret = '${clientSecret}' AND cid_requested = '${cid}'`,
+    )
     poolClient.release()
 
-    return client
+    return client.rows
   } catch (e) {
     console.error(e)
   }

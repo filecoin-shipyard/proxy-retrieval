@@ -1,9 +1,15 @@
 import * as socketIO from 'socket.io'
+import { logger } from './logger'
 
-export const sendCidAvailability = (io: socketIO.Server, message) => {
+import { getCidAvailability } from './lotus'
+
+export const sendCidAvailability = async (io: socketIO.Server, message) => {
   try {
+    const cidA = await getCidAvailability(message.miner, message.cid, 't1wbcogexgb4lxxt2c2h7g56eg23lzwyguy24petq')
+    logger.log('message:\n', cidA)
+
     // TODO: retrieve availability from lotus
-    io.emit('cid_availability', {
+    return io.emit('cid_availability', {
       message: 'cid_availability',
       cid: 'bafk2bzacebbhqzi4y546h7gjbduauzha6z33ltequ7hpbvywnttc57xrwcit2',
       client_token: 'HIgP2JW9wHdlTYb89rjEy9/IQDR02EwMvtg4XN5Y/kY=',
