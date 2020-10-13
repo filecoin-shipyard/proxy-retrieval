@@ -5,8 +5,13 @@ import { getCidAvailability } from './lotus'
 
 export const sendCidAvailability = async (io: socketIO.Server, message) => {
   try {
-    const cidA = await getCidAvailability(message.miner, message.cid, 't1wbcogexgb4lxxt2c2h7g56eg23lzwyguy24petq')
-    logger.log('message:\n', cidA)
+    // TODO: get clientWallet from browser
+    const cidAvailability = await getCidAvailability(
+      message.miner,
+      message.cid,
+      't1wbcogexgb4lxxt2c2h7g56eg23lzwyguy24petq',
+    )
+    logger.log('message:\n', cidAvailability)
 
     // TODO: retrieve availability from lotus
     return io.emit('cid_availability', {

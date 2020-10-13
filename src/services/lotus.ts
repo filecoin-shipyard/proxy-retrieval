@@ -32,8 +32,8 @@ export const getCidAvailability = async (miner, dataCid, clientWallet) => {
       await insertClient(clientSecret, dataCid, wallet.result)
 
       const queryMiner = await getClientMinerQueryOffer(miner, dataCid)
-      console.log(queryMiner)
-      return { wall: wallet, query: queryMiner }
+
+      return { wallet: wallet.result, query: queryMiner.result }
     }
   } catch (e) {
     return e
