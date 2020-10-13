@@ -1,6 +1,7 @@
 import * as knex from 'knex'
 import * as path from 'path'
-import { config } from './index'
+
+import { env } from './env'
 
 export const tables = {
   clients: 'clients',
@@ -9,10 +10,11 @@ export const tables = {
 export const database = {
   client: 'postgresql',
   connection: {
-    host: config.db.host,
-    user: config.db.user,
-    password: config.db.password,
-    database: config.db.database,
+    host: env.db.host,
+    user: env.db.user,
+    password: env.db.password,
+    database: env.db.database,
+    port: 32768,
   },
   migrations: {
     directory: path.resolve('../db/migrations'),

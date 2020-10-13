@@ -1,34 +1,33 @@
 import * as chalk from 'chalk'
 import * as socketIO from 'socket.io'
 
-import { config } from './config'
+import { env } from './config'
 import { logger } from './services/logger'
 import { sendCidAvailability } from './services/send-cid-availability'
 import { sendFundsConfirmed } from './services/send-funds-confirmed'
-import { initDB } from './services/database'
 
-initDB()
-  .then((r) => console.log('DB was init'))
-  .catch((e) => console.log('DB was already init'))
+const start = () => {
+  const io = socketIO()
 
-const io = socketIO()
+  io.on('connection', (client) => {
+    logger.log(chalk.greenBright`Got a connection from`, client.id)
 
-io.on('connection', (client) => {
-  logger.log(chalk.greenBright`Got a connection from`, client.id)
+    client.on('query_cid', (message) => {
+      logger.log(chalk.blueBright`Got a message from`, client.id, 'message:\n', message)
 
-  client.on('query_cid', (message) => {
-    logger.log(chalk.blueBright`Got a message from`, client.id, 'message:\n', message)
+      sendCidAvailability(io, message)
+    })
 
-    sendCidAvailability(io, message)
+    client.on('funds_confirmed', (message) => {
+      logger.log(chalk.blueBright`Got a message from`, client.id, 'message:\n', message)
+
+      sendFundsConfirmed(io, message)
+    })
   })
 
-  client.on('funds_confirmed', (message) => {
-    logger.log(chalk.blueBright`Got a message from`, client.id, 'message:\n', message)
+  logger.log(chalk.green`listening on port`, env.port)
 
-    sendFundsConfirmed(io, message)
-  })
-})
+  io.listen(env.port)
+}
 
-logger.log(chalk.green`listening on port`, config.port)
-
-io.listen(config.port)
+start()
