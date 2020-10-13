@@ -1,18 +1,7 @@
 import * as socketIO from 'socket.io'
-import { logger } from './logger'
-
-import { getCidAvailability } from './lotus'
 
 export const sendCidAvailability = async (io: socketIO.Server, message) => {
   try {
-    // TODO: get clientWallet from browser
-    const cidAvailability = await getCidAvailability(
-      message.miner,
-      message.cid,
-      't1wbcogexgb4lxxt2c2h7g56eg23lzwyguy24petq',
-    )
-    logger.log('message:\n', cidAvailability)
-
     // TODO: retrieve availability from lotus
     return io.emit('cid_availability', {
       message: 'cid_availability',

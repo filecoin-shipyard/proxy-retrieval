@@ -1,8 +1,6 @@
 import axios from 'axios'
-import { Md5 } from 'ts-md5/dist/md5'
 
 import { config } from '../config'
-import { getClient, insertClient } from './database'
 
 const { api: apiUrl, token } = config.lotus
 
@@ -18,26 +16,6 @@ const callLotus = async (body) => {
   const { data } = await api.post('', body)
 
   return data
-}
-
-export const getCidAvailability = async (miner, dataCid, clientWallet) => {
-  const clientSecret = Md5.hashStr(clientWallet).toString()
-  const clientData = await getClient(clientSecret, dataCid)
-
-  try {
-    if (clientData.length > 0) {
-      return clientData
-    } else {
-      const wallet = await walletNew()
-      await insertClient(clientSecret, dataCid, wallet.result)
-
-      const queryMiner = await getClientMinerQueryOffer(miner, dataCid)
-
-      return { wallet: wallet.result, query: queryMiner.result }
-    }
-  } catch (e) {
-    return e
-  }
 }
 
 export const getClientMinerQueryOffer = (miner, dataCid) => {

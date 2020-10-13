@@ -21,6 +21,7 @@ export const initDB = async () => {
             client_secret varchar(100) NOT NULL,\
             cid_requested varchar(100) NOT NULL,\
             wallet_address varchar(100) NOT NULL,\
+            price_attofil varchar(100) NOT NULL,\
             stage varchar(50) NOT NULL DEFAULT 'RECEIVED_CID',\
             temp_file_path varchar(50), \
             date timestamptz NOT NULL DEFAULT NOW() \
@@ -33,13 +34,13 @@ export const initDB = async () => {
   }
 }
 
-export const insertClient = async (clientSecret: string, cidRequested: string, walletAddress: string) => {
+export const insertClient = async (clientSecret: string, cidRequested: string, walletAddress: string, priceAttofil) => {
   try {
     const poolClient = await pool.connect()
 
     await poolClient.query(`\
-                INSERT INTO clients (client_secret, cid_requested, wallet_address) \
-                VALUES ('${clientSecret}', '${cidRequested}', '${walletAddress}')\
+                INSERT INTO clients (client_secret, cid_requested, wallet_address, price_attofil) \
+                VALUES ('${clientSecret}', '${cidRequested}', '${walletAddress}', '${priceAttofil}')\
                 `)
 
     return poolClient.release()
