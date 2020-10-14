@@ -2,13 +2,13 @@
 
 ### Starting Point
 
-Provision an `m5ad.12xlarge` on AWS.   Give it a root volume size of 1023 GB.  It will come with 2x900 GB SSD drives.  We'll mount one at `/home/ubuntu` and another at `/mnt/ssd`.
+Provision an `m5ad.12xlarge` on AWS. Give it a root volume size of 1023 GB. It will come with 2x900 GB SSD drives. We'll mount one at `/home/ubuntu` and another at `/mnt/ssd`.
 
 ### Basic Setup
 
 - Set hostname
-	- `sudo hostname XXXXXX`
-	- `sudo vi /etc/hostname`
+  - `sudo hostname XXXXXX`
+  - `sudo vi /etc/hostname`
 - Partitioning and Swap:
 
 ```
@@ -20,9 +20,7 @@ Provision an `m5ad.12xlarge` on AWS.   Give it a root volume size of 1023 GB.  I
 	sudo mkfs.ext4 -L myext4 /dev/nvme2n1p1
 ```
 
-
 - Put in /etc/fstab:
-
 
 ```
 		/dev/nvme1n1p1 /mnt/ssd ext4 defaults 0 0
@@ -62,12 +60,13 @@ Provision an `m5ad.12xlarge` on AWS.   Give it a root volume size of 1023 GB.  I
 
 ```
 	sudo mkdir /mnt/ssd/filecoin-proof-parameters
-	sudo chown -R ubuntu:ubuntu /mnt/ssd/filecoin-proof-parameters 
+	sudo chown -R ubuntu:ubuntu /mnt/ssd/filecoin-proof-parameters
 	sudo ln -s /mnt/ssd/filecoin-proof-parameters /var/tmp/filecoin-proof-parameters
 	sudo chown -R ubuntu:ubuntu /var/tmp/filecoin-proof-parameters/
 ```
 
 - Update the machine
+
 ```
 	sudo apt update && sudo apt upgrade -y
 	sudo reboot now
@@ -160,7 +159,7 @@ nohup lotus daemon > ~/lotus-daemon.log &
 
 ```
 	# Fund the t3xxxxxxxxxxx wallet from some other source, enough for init gas prices:
-	
+
 	lotus send --gas-limit 10000000 --gas-feecap 10000000 --gas-premium 10000000 --from t1poe76utjdqe7grf2mkk55xeymxsdtf5piefccki t3squijkcyh5fa4ch5pkej6tqav4zeo2h7h4r74u42srphinzrsan67xcv55dergimbmgfrsbgmyyk4rrkmb6q 2
 		# t1poe is the from wallet
 		# t3squi is the recipient wallet
@@ -175,7 +174,7 @@ nohup lotus daemon > ~/lotus-daemon.log &
 	# init the miner and get miner id
 	nohup lotus-miner init --worker T3_WALLET_FUNDED_IN_PR  > ~/lotus-miner.log &
 	tail -f ~/lotus-miner.log
-	
+
 	# get the miner id once init suceeds ==> wallet.txt
 	lotus-miner stop
 	ps aux | grep lotus-miner   # until it's definitely not running
