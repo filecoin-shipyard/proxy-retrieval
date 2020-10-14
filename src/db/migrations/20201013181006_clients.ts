@@ -1,8 +1,5 @@
 import * as Knex from 'knex'
-
-const tables = {
-  clients: 'clients',
-}
+import { tables } from '../../config'
 
 export async function up(knex: Knex) {
   return knex.schema.createTable(tables.clients, (table) => {
