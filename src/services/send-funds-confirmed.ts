@@ -2,7 +2,7 @@ import * as socketIO from 'socket.io'
 
 export const sendFundsConfirmed = (io: socketIO.Server, message) => {
   try {
-    // TODO: retrieve availability from lotus
+    // TODO: confirm funds
     io.emit('funds_confirmed', {
       message: 'funds_confirmed',
       cid: 'bafk2bzacebbhqzi4y546h7gjbduauzha6z33ltequ7hpbvywnttc57xrwcit2',

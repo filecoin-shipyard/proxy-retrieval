@@ -2,7 +2,7 @@ import * as socketIO from 'socket.io'
 
 export const sendRetrievalStatusResponse = (io: socketIO.Server, message) => {
   try {
-    // TODO: here
+    // TODO: get status from lotus
 
     // To indicate that the retrieval from the storage miner has not yet started:
     io.emit('retrieval_status_response', {

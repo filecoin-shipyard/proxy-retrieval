@@ -1,20 +1,42 @@
+import { AxiosError } from 'axios'
 import * as socketIO from 'socket.io'
 
-export const sendCidAvailability = (io: socketIO.Server, message) => {
+import { logger } from './logger'
+import * as lotus from './lotus'
+
+const messageType = 'cid_availability'
+
+export const sendCidAvailability = async (io: socketIO.Server, message) => {
   try {
     // TODO: retrieve availability from lotus
-    io.emit('cid_availability', {
-      message: 'cid_availability',
-      cid: 'bafk2bzacebbhqzi4y546h7gjbduauzha6z33ltequ7hpbvywnttc57xrwcit2',
-      client_token: 'HIgP2JW9wHdlTYb89rjEy9/IQDR02EwMvtg4XN5Y/kY=',
-      available: true,
-      price_attofil: '1000000',
-      payment_wallet: 'f1stoztiw5sxeyvezjttq5727wfdkooweskpue5fa',
-    })
+    // const data = await lotus.getClientMinerQueryOffer('t01352', message.cid)
+    const data = await lotus.version()
+    console.log('data', data)
+    console.log('-------')
+
+    const isAvailable = true
+    const priceAttofil = '1000000'
+    const paymentWallet = 'f1stoztiw5sxeyvezjttq5727wfdkooweskpue5fa'
+    const clientToken = 'HIgP2JW9wHdlTYb89rjEy9/IQDR02EwMvtg4XN5Y/kY='
+
+    const replyMessage = {
+      message: messageType,
+      cid: message.cid,
+      client_token: clientToken,
+      available: isAvailable,
+
+      price_attofil: priceAttofil,
+      payment_wallet: paymentWallet,
+    }
+
+    io.emit(messageType, replyMessage)
   } catch (err) {
-    io.emit('cid_availability', {
-      message: 'cid_availability',
-      cid: 'bafk2bzacebbhqzi4y546h7gjbduauzha6z33ltequ7hpbvywnttc57xrwcit2',
+    logger.error(err.toJSON ? (err as AxiosError).toJSON() : err)
+
+    // TODO: how do we handle errors?
+    io.emit(messageType, {
+      message: messageType,
+      cid: message.cid,
       available: false,
     })
   }

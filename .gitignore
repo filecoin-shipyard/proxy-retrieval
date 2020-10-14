@@ -17,3 +17,6 @@ Thumbs.db
 # logs
 **/logs/*
 !**/logs/.gitkeep
+
+# env
+.env
