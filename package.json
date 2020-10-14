@@ -4,8 +4,8 @@
   "description": "Allow a browser node to retrieve from a storage miner",
   "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "dev": "ts-node-dev --no-notify src/index.ts",
+    "start": "yarn migrate && ts-node src/index.ts",
+    "dev": "yarn migrate && ts-node-dev --no-notify src/index.ts",
     "lotus": "ts-node-dev --no-notify src/services/lotus.ts",
     "migrate": "knex migrate:latest --cwd src/db",
     "migrate-make": "knex migrate:make --cwd src/db"
