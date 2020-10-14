@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-import { config } from '../config'
+import { env } from '../config'
 
-const { api: apiUrl, token } = config.lotus
+const { api: apiUrl, token } = env.lotus
 
 const api = axios.create({
   baseURL: apiUrl,
