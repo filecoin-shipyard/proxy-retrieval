@@ -14,6 +14,7 @@ export const database = {
     user: env.db.user,
     password: env.db.password,
     database: env.db.database,
+    port: env.db.port || 5432,
   },
   migrations: {
     directory: path.resolve('../db/migrations'),

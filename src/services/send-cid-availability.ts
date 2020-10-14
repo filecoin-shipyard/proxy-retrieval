@@ -4,20 +4,22 @@ import * as socketIO from 'socket.io'
 import { logger } from './logger'
 import * as lotus from './lotus'
 
+import * as jwt from 'jsonwebtoken'
+import { env } from '../config'
+
 const messageType = 'cid_availability'
 
 export const sendCidAvailability = async (io: socketIO.Server, message) => {
   try {
-    // TODO: retrieve availability from lotus
-    // const data = await lotus.getClientMinerQueryOffer('t01352', message.cid)
-    const data = await lotus.version()
+    const data = await lotus.getClientMinerQueryOffer(message.miner, message.cid)
     console.log('data', data)
     console.log('-------')
 
-    const isAvailable = true
-    const priceAttofil = '1000000'
+    const isAvailable = !data.result.Err
+    const priceAttofil = data.result.MinPrice
+    // TODO: get wallet
     const paymentWallet = 'f1stoztiw5sxeyvezjttq5727wfdkooweskpue5fa'
-    const clientToken = 'HIgP2JW9wHdlTYb89rjEy9/IQDR02EwMvtg4XN5Y/kY='
+    const clientToken = jwt.sign(message, env.token.secret, { expiresIn: env.token.expiresIn })
 
     const replyMessage = {
       message: messageType,
@@ -41,3 +43,8 @@ export const sendCidAvailability = async (io: socketIO.Server, message) => {
     })
   }
 }
+
+// TODO: remove; data to test with:
+//
+// bafk2bzaced7r5ss6665h7d4s4qupduojmiuvmhqoiknmun5mawa3xj2s3lqmq
+// f033048

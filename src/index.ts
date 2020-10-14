@@ -37,9 +37,13 @@ const start = () => {
       // TODO: re-send same chunk
       logger.log(chalk.yellowBright`Client is asking to resend chunk`, message.id)
 
-      await sleep(3000)
+      await sleep(5000)
       sendChunk(io, { ...message, id: message.id - 1 })
     })
+  })
+
+  io.on('disconnect', (client) => {
+    logger.log(chalk.redBright`Disconnected from`, client.id)
   })
 
   logger.log(chalk.green`listening on port`, env.port)

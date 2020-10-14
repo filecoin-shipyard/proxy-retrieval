@@ -21,6 +21,12 @@ interface Environment {
     user: string
     password: string
     database: string
+    port: number
+  }
+
+  token: {
+    secret: string
+    expiresIn: string
   }
 }
 
@@ -41,5 +47,11 @@ export const env = {
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
+    port: +process.env.DB_PORT || 5432,
+  },
+
+  token: {
+    secret: process.env.TOKEN_SECRET,
+    expiresIn: process.env.TOKEN_EXPIRES_IN || '7 days',
   },
 } as Environment & { [key: string]: any }
