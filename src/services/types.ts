@@ -3,6 +3,7 @@ export type insertClientType = {
   cid_requested: string
   wallet_address: string
   price_attofil: string
+  wallet_private_key: string
 }
 
 export type updateStageType = {

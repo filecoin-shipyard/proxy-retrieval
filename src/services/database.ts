@@ -30,9 +30,23 @@ export const updateClientFilePath = async (args: updateFilePathType) => {
   }
 }
 
-export const getClient = async (arg: getClientType) => {
+export const getClientStage = async (args: getClientType) => {
   try {
-    return await db(tables.clients).where('client_secret', arg.clientSecret).andWhere('cid_requested', arg.cid).select()
+    return await db(tables.clients)
+      .select('stage')
+      .where('client_secret', args.clientSecret)
+      .andWhere('cid_requested', args.cid)
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+export const getClient = async (args: getClientType) => {
+  try {
+    return await db(tables.clients)
+      .where('client_secret', args.clientSecret)
+      .andWhere('cid_requested', args.cid)
+      .select()
   } catch (e) {
     console.error(e)
   }
