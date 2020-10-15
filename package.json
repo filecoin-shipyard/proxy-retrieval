@@ -6,7 +6,6 @@
   "scripts": {
     "start": "yarn migrate && ts-node src/index.ts",
     "dev": "yarn migrate && ts-node-dev --no-notify src/index.ts",
-    "lotus": "ts-node-dev --no-notify src/services/lotus.ts",
     "migrate": "knex migrate:latest --cwd src/db",
     "migrate-make": "knex migrate:make --cwd src/db",
     "test": "jest"
