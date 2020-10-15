@@ -14,6 +14,7 @@ interface Environment {
   lotus: {
     api: string
     token: string
+    retrievePath: string
   }
 
   db: {
@@ -40,6 +41,7 @@ export const env = {
   lotus: {
     api: process.env.LOTUS_API,
     token: process.env.LOTUS_TOKEN,
+    retrievePath: process.env.LOTUS_RETRIEVE,
   },
 
   db: {
