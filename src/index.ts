@@ -2,11 +2,13 @@ import * as chalk from 'chalk'
 import * as socketIO from 'socket.io'
 
 import { env } from './config'
+import { toJSCase } from './services/case'
 import { logger } from './services/logger'
 import { sendChunk } from './services/send-chunk'
 import { sendCidAvailability } from './services/send-cid-availability'
 import { sendFundsConfirmed } from './services/send-funds-confirmed'
 import { sleep } from './services/sleep'
+import { validateAndDecodeToken } from './services/token'
 
 const start = () => {
   const io = socketIO()
@@ -17,28 +19,54 @@ const start = () => {
     client.on('query_cid', (message) => {
       logger.log(chalk.blueBright`Got a message from`, client.id, 'message:\n', message)
 
-      sendCidAvailability(io, message)
+      const messageJS = toJSCase(message)
+      sendCidAvailability(io, messageJS)
     })
 
     client.on('funds_confirmed', (message) => {
       logger.log(chalk.blueBright`Got a message from`, client.id, 'message:\n', message)
+      const messageJS = toJSCase(message)
 
-      sendFundsConfirmed(io, message)
-      sendChunk(io, message)
+      const token = validateAndDecodeToken(messageJS)
+
+      if (!token) {
+        return
+      }
+
+      sendFundsConfirmed(io, messageJS)
+      sendChunk(io, messageJS)
     })
 
     client.on('chunk_received', (message) => {
+      const messageJS = toJSCase(message)
+      const token = validateAndDecodeToken(messageJS)
+
+      if (!token) {
+        return
+      }
+
       // TODO: send next chunk if any
-      logger.log(chalk.blueBright`Client got the chunk`, message.id)
-      sendChunk(io, message)
+      logger.log(chalk.blueBright`Client got the chunk`, messageJS.id)
+      sendChunk(io, messageJS)
     })
 
     client.on('chunk_resend', async (message) => {
-      // TODO: re-send same chunk
-      logger.log(chalk.yellowBright`Client is asking to resend chunk`, message.id)
+      const messageJS = toJSCase(message)
+      const token = validateAndDecodeToken(messageJS)
 
-      await sleep(5000)
-      sendChunk(io, { ...message, id: message.id - 1 })
+      if (!token) {
+        return
+      }
+
+      // TODO: re-send same chunk
+      logger.log(chalk.yellowBright`Client is asking to resend chunk`, messageJS.id)
+
+      await sleep(3000)
+      sendChunk(io, { ...messageJS, id: messageJS.id - 1 })
+    })
+
+    client.on('disconnect', async (...args) => {
+      logger.log(chalk.redBright`Client disconnected`, ...args)
     })
   })
 

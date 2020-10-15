@@ -23,6 +23,7 @@
   "homepage": "https://github.com/mgoelzer/proxy-retrieval#readme",
   "dependencies": {
     "axios": "^0.20.0",
+    "camelcase-keys": "^6.2.2",
     "dotenv": "^8.2.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.6",
