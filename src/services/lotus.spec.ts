@@ -8,7 +8,6 @@ describe('services/lotus', () => {
     it('returns the availability for a CID', async () => {
       const { result } = await getClientMinerQueryOffer(miner, cid)
 
-      expect(result)
       expect(result.Err).toEqual('')
       expect(+result.MinPrice).toBeGreaterThanOrEqual(0)
       // ...
