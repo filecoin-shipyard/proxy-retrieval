@@ -3,9 +3,7 @@ import * as socketIO from 'socket.io'
 
 import { logger } from './logger'
 import * as lotus from './lotus'
-
-import * as jwt from 'jsonwebtoken'
-import { env } from '../config'
+import { createToken } from './token'
 
 const messageType = 'cid_availability'
 
@@ -19,7 +17,7 @@ export const sendCidAvailability = async (io: socketIO.Server, message) => {
     const priceAttofil = data.result.MinPrice
     // TODO: get wallet
     const paymentWallet = 'f1stoztiw5sxeyvezjttq5727wfdkooweskpue5fa'
-    const clientToken = jwt.sign(message, env.token.secret, { expiresIn: env.token.expiresIn })
+    const clientToken = createToken(message)
 
     const replyMessage = {
       message: messageType,
