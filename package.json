@@ -23,8 +23,10 @@
   "homepage": "https://github.com/mgoelzer/proxy-retrieval#readme",
   "dependencies": {
     "axios": "^0.20.0",
+    "bignumber.js": "^9.0.1",
     "camelcase-keys": "^6.2.2",
     "dotenv": "^8.2.0",
+    "interval-promise": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.6",
     "pg": "^8.4.1",

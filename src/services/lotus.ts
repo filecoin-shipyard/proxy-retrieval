@@ -6,6 +6,12 @@ var uniqueFilename = require('unique-filename')
 
 const { api: apiUrl, token, retrievePath } = env.lotus
 
+export enum FundsStatus {
+  funds_confirmed,
+  error_insufficient_funds,
+  error_price_changed,
+}
+
 const api = axios.create({
   baseURL: apiUrl,
   headers: {
@@ -18,6 +24,10 @@ const callLotus = async (body) => {
   const { data } = await api.post('', body, { timeout: 10000 })
 
   return data
+}
+
+export const version = () => {
+  return callLotus({ jsonrpc: '2.0', method: 'Filecoin.Version', params: [], id: 0 })
 }
 
 export const getClientMinerQueryOffer = (miner, dataCid) => {
@@ -48,16 +58,38 @@ export const walletBalance = (wallet) => {
   return callLotus({ jsonrpc: '2.0', method: 'Filecoin.WalletBalance', params: [wallet], id: 0 })
 }
 
-export const version = () => {
-  return callLotus({ jsonrpc: '2.0', method: 'Filecoin.Version', params: [], id: 0 })
-}
-
 export const createWallet = async (): Promise<string> => {
   const newWallet = await walletNew()
   const wallet = newWallet.result
   console.log('new wallet: ' + newWallet.result)
 
   return wallet.result
+}
+
+export const confirmFunds = async (wallet, requiredFunds): Promise<FundsStatus> => {
+  const BigNumber = require('bignumber.js')
+  const interval = require('interval-promise')
+
+  let requiredFundsBN = new BigNumber(requiredFunds)
+  let fundsStatus = FundsStatus.error_insufficient_funds
+
+  // Run a function 10 times with 5 second between each iteration
+  await interval(
+    async (iteration, stop) => {
+      const balance = await walletBalance(wallet)
+      if (balance) {
+        let balanceBN = new BigNumber(balance.result)
+        if (balanceBN.comparedTo(requiredFundsBN) == 1 || balanceBN.comparedTo(requiredFundsBN) == 0) {
+          fundsStatus = FundsStatus.funds_confirmed
+          stop()
+        }
+      }
+    },
+    5000,
+    { iterations: 10 },
+  )
+
+  return fundsStatus
 }
 
 export const queryMinerOffer = async (dataCid, minerID): Promise<any> => {
@@ -119,7 +151,3 @@ export const retrieve = async (dataCid, minerID, wallet): Promise<string> => {
 
   return filePath
 }
-
-// retrieve sample:
-const wallet = createWallet()
-retrieve('bafk2bzaced7r5ss6665h7d4s4qupduojmiuvmhqoiknmun5mawa3xj2s3lqmq', 'f033048', wallet)
