@@ -73,7 +73,7 @@ export const confirmFunds = async (wallet, requiredFunds): Promise<FundsStatus> 
   let requiredFundsBN = new BigNumber(requiredFunds)
   let fundsStatus = FundsStatus.error_insufficient_funds
 
-  // Run a function 10 times with 5 second between each iteration
+  // iterate for 20 minutes, waiting 5 seconds before each iteration
   await interval(
     async (iteration, stop) => {
       const balance = await walletBalance(wallet)
@@ -86,7 +86,7 @@ export const confirmFunds = async (wallet, requiredFunds): Promise<FundsStatus> 
       }
     },
     5000,
-    { iterations: 10 },
+    { iterations: 240 },
   )
 
   return fundsStatus
