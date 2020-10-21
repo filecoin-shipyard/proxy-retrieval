@@ -5,6 +5,7 @@ import { env } from '../config'
 var uniqueFilename = require('unique-filename')
 
 const { api: apiUrl, token, retrievePath } = env.lotus
+const retrieve_timeout = 30 * 60000 // 30 mins
 
 export enum FundsStatus {
   funds_confirmed,
@@ -20,8 +21,8 @@ const api = axios.create({
   },
 })
 
-const callLotus = async (body) => {
-  const { data } = await api.post('', body, { timeout: 10000 })
+const callLotus = async (body, timeout = 10000) => {
+  const { data } = await api.post('', body, { timeout: timeout })
 
   return data
 }
@@ -40,12 +41,15 @@ export const getClientMinerQueryOffer = (miner, dataCid) => {
 }
 
 export const getClientRetrieve = (retrievalOffer, outFile) => {
-  return callLotus({
-    jsonrpc: '2.0',
-    method: 'Filecoin.ClientRetrieve',
-    params: [retrievalOffer, { Path: outFile, IsCAR: false }],
-    id: 0,
-  })
+  return callLotus(
+    {
+      jsonrpc: '2.0',
+      method: 'Filecoin.ClientRetrieve',
+      params: [retrievalOffer, { Path: outFile, IsCAR: false }],
+      id: 0,
+    },
+    retrieve_timeout,
+  )
 }
 
 // Generate a Secp256k1 wallet
@@ -66,7 +70,7 @@ export const createWallet = async (): Promise<string> => {
   return wallet.result
 }
 
-export const confirmFunds = async (wallet, requiredFunds): Promise<FundsStatus> => {
+export const confirmFunds = async (wallet, requiredFunds, iterations = 240): Promise<FundsStatus> => {
   const BigNumber = require('bignumber.js')
   const interval = require('interval-promise')
 
@@ -86,7 +90,7 @@ export const confirmFunds = async (wallet, requiredFunds): Promise<FundsStatus> 
       }
     },
     5000,
-    { iterations: 240 },
+    { iterations: iterations },
   )
 
   return fundsStatus
@@ -125,9 +129,10 @@ export const getCIDAvailability = async (dataCid, minerID): Promise<any> => {
 }
 
 export const retrieve = async (dataCid, minerID, wallet): Promise<string> => {
-  let filePath = ''
+  let filePath = null
   try {
     const queryOffer = await queryMinerOffer(dataCid, minerID)
+    console.log('queryOffer: ' + JSON.stringify(queryOffer))
     if (queryOffer) {
       const retrievalOffer = {
         Root: queryOffer.Root,
@@ -143,7 +148,12 @@ export const retrieve = async (dataCid, minerID, wallet): Promise<string> => {
       }
       filePath = uniqueFilename(retrievePath, 'pr')
       const retrieveResult = await getClientRetrieve(retrievalOffer, filePath)
+
       console.log('retrieve result: ', retrieveResult)
+
+      if (retrieveResult.error) {
+        filePath = null
+      }
     }
   } catch (err) {
     console.log('Error: ' + err.message)
