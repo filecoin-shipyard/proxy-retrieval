@@ -1,8 +1,8 @@
 import axios from 'axios'
+import * as uniqueFilename from 'unique-filename'
+import { logger } from './logger'
 
 import { env } from '../config'
-
-var uniqueFilename = require('unique-filename')
 
 const { api: apiUrl, token, retrievePath } = env.lotus
 const retrieve_timeout = 30 * 60000 // 30 mins
@@ -65,7 +65,8 @@ export const walletBalance = (wallet) => {
 export const createWallet = async (): Promise<string> => {
   const newWallet = await walletNew()
   const wallet = newWallet.result
-  console.log('new wallet: ' + newWallet.result)
+
+  logger.log(`new wallet: ${newWallet.result}`)
 
   return wallet.result
 }
@@ -79,7 +80,7 @@ export const confirmFunds = async (wallet, requiredFunds, iterations = 240): Pro
 
   // iterate for 20 minutes, waiting 5 seconds before each iteration
   await interval(
-    async (iteration, stop) => {
+    async (_iteration, stop) => {
       const balance = await walletBalance(wallet)
       if (balance) {
         let balanceBN = new BigNumber(balance.result)
@@ -132,7 +133,9 @@ export const retrieve = async (dataCid, minerID, wallet): Promise<string> => {
   let filePath = null
   try {
     const queryOffer = await queryMinerOffer(dataCid, minerID)
-    console.log('queryOffer: ' + JSON.stringify(queryOffer))
+
+    logger.log('queryOffer: ' + JSON.stringify(queryOffer))
+
     if (queryOffer) {
       const retrievalOffer = {
         Root: queryOffer.Root,
@@ -147,16 +150,17 @@ export const retrieve = async (dataCid, minerID, wallet): Promise<string> => {
         MinerPeer: queryOffer.MinerPeer,
       }
       filePath = uniqueFilename(retrievePath, 'pr')
+
       const retrieveResult = await getClientRetrieve(retrievalOffer, filePath)
 
-      console.log('retrieve result: ', retrieveResult)
+      logger.log('retrieve result: ', retrieveResult)
 
       if (retrieveResult.error) {
         filePath = null
       }
     }
   } catch (err) {
-    console.log('Error: ' + err.message)
+    logger.error(`Error: ${err.message}`)
   }
 
   return filePath

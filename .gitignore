@@ -13,6 +13,7 @@ Thumbs.db
 
 # generated
 *.generated.*
+yarn-error.log
 
 # logs
 **/logs/*
