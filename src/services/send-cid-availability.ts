@@ -41,8 +41,3 @@ export const sendCidAvailability = async (io: socketIO.Server, message) => {
     })
   }
 }
-
-// TODO: remove; data to test with:
-//
-// bafk2bzaced7r5ss6665h7d4s4qupduojmiuvmhqoiknmun5mawa3xj2s3lqmq
-// f033048
