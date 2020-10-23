@@ -1,8 +1,8 @@
 import axios from 'axios'
-import * as uniqueFilename from 'unique-filename'
-import { logger } from './logger'
+import uniqueFilename from 'unique-filename'
 
 import { env } from '../config'
+import { logger } from './logger'
 
 const { api: apiUrl, token, retrievePath } = env.lotus
 const retrieve_timeout = 30 * 60000 // 30 mins
@@ -66,7 +66,7 @@ export const createWallet = async (): Promise<string> => {
   const newWallet = await walletNew()
   const wallet = newWallet.result
 
-  logger.log(`new wallet: ${newWallet.result}`)
+  logger.log(`new wallet: ${wallet}`)
 
   return wallet.result
 }
@@ -99,10 +99,12 @@ export const confirmFunds = async (wallet, requiredFunds, iterations = 240): Pro
 
 export const queryMinerOffer = async (dataCid, minerID): Promise<any> => {
   const queryOffer = await getClientMinerQueryOffer(minerID, dataCid)
-  console.log(JSON.stringify(queryOffer))
+  logger.log('Query Offer:', queryOffer)
+
   if (queryOffer.error || !queryOffer.result) {
-    console.error('ClientMinerQueryOffer:' + queryOffer.error)
-    return null
+    logger.error('ClientMinerQueryOffer:', queryOffer.error)
+
+    return
   }
 
   return queryOffer.result
@@ -113,7 +115,7 @@ export const getCIDAvailability = async (dataCid, minerID): Promise<any> => {
 
   try {
     const ver = await version()
-    console.log(ver)
+    logger.log(ver)
 
     const queryOffer = await queryMinerOffer(dataCid, minerID)
     if (queryOffer) {
@@ -123,18 +125,19 @@ export const getCIDAvailability = async (dataCid, minerID): Promise<any> => {
       result.price = queryOffer.MinPrice + queryOffer.UnsealPrice
     }
   } catch (err) {
-    console.log('Error: ' + err.message)
+    logger.error(err)
   }
 
   return result
 }
 
-export const retrieve = async (dataCid, minerID, wallet): Promise<string> => {
+export const retrieve = async (dataCid: string, minerID: string, wallet: string): Promise<string> => {
   let filePath = null
+
   try {
     const queryOffer = await queryMinerOffer(dataCid, minerID)
 
-    logger.log('queryOffer: ' + JSON.stringify(queryOffer))
+    logger.log('queryOffer:', queryOffer)
 
     if (queryOffer) {
       const retrievalOffer = {
@@ -156,11 +159,12 @@ export const retrieve = async (dataCid, minerID, wallet): Promise<string> => {
       logger.log('retrieve result: ', retrieveResult)
 
       if (retrieveResult.error) {
-        filePath = null
+        filePath = undefined
+        throw new Error(retrieveResult.error.message)
       }
     }
   } catch (err) {
-    logger.error(`Error: ${err.message}`)
+    logger.error('Error retrieving file', err)
   }
 
   return filePath
