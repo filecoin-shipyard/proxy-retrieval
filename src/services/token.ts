@@ -7,7 +7,7 @@ export interface ClientToken {
 }
 
 export const validateAndDecodeToken = ({ clientToken }: ClientToken) => {
-  return jwt.verify(clientToken, env.token.secret) as Object
+  return jwt.verify(clientToken, env.token.secret) as Record<string, unknown>
 }
 
 export const createToken = (message) => {

@@ -1,4 +1,6 @@
 import axios from 'axios'
+import BigNumber from 'bignumber.js'
+import interval from 'interval-promise'
 import uniqueFilename from 'unique-filename'
 
 import { env } from '../config'
@@ -8,9 +10,9 @@ const { api: apiUrl, token, retrievePath } = env.lotus
 const retrieve_timeout = 30 * 60000 // 30 mins
 
 export enum FundsStatus {
-  funds_confirmed,
-  error_insufficient_funds,
-  error_price_changed,
+  FundsConfirmed,
+  ErrorInsufficientFunds,
+  ErrorPriceChanged,
 }
 
 const api = axios.create({
@@ -72,20 +74,17 @@ export const createWallet = async (): Promise<string> => {
 }
 
 export const confirmFunds = async (wallet, requiredFunds, iterations = 240): Promise<FundsStatus> => {
-  const BigNumber = require('bignumber.js')
-  const interval = require('interval-promise')
-
-  let requiredFundsBN = new BigNumber(requiredFunds)
-  let fundsStatus = FundsStatus.error_insufficient_funds
+  const requiredFundsBN = new BigNumber(requiredFunds)
+  let fundsStatus = FundsStatus.ErrorInsufficientFunds
 
   // iterate for 20 minutes, waiting 5 seconds before each iteration
   await interval(
     async (_iteration, stop) => {
       const balance = await walletBalance(wallet)
       if (balance) {
-        let balanceBN = new BigNumber(balance.result)
+        const balanceBN = new BigNumber(balance.result)
         if (balanceBN.comparedTo(requiredFundsBN) == 1 || balanceBN.comparedTo(requiredFundsBN) == 0) {
-          fundsStatus = FundsStatus.funds_confirmed
+          fundsStatus = FundsStatus.FundsConfirmed
           stop()
         }
       }
@@ -97,7 +96,7 @@ export const confirmFunds = async (wallet, requiredFunds, iterations = 240): Pro
   return fundsStatus
 }
 
-export const queryMinerOffer = async (dataCid, minerID): Promise<any> => {
+export const queryMinerOffer = async (dataCid, minerID) => {
   const queryOffer = await getClientMinerQueryOffer(minerID, dataCid)
   logger.log('Query Offer:', queryOffer)
 
@@ -110,8 +109,8 @@ export const queryMinerOffer = async (dataCid, minerID): Promise<any> => {
   return queryOffer.result
 }
 
-export const getCIDAvailability = async (dataCid, minerID): Promise<any> => {
-  let result = { availability: false, wallet: null, price: null }
+export const getCIDAvailability = async (dataCid, minerID) => {
+  const result = { availability: false, wallet: null, price: null }
 
   try {
     const ver = await version()
@@ -131,8 +130,8 @@ export const getCIDAvailability = async (dataCid, minerID): Promise<any> => {
   return result
 }
 
-export const retrieve = async (dataCid: string, minerID: string, wallet: string): Promise<string> => {
-  let filePath = null
+export const retrieve = async (dataCid: string, minerID: string, wallet: string) => {
+  let filePath: string
 
   try {
     const queryOffer = await queryMinerOffer(dataCid, minerID)

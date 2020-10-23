@@ -1,6 +1,6 @@
 import * as socketIO from 'socket.io'
 
-export const sendFundsConfirmed = (io: socketIO.Server, message) => {
+export const sendFundsConfirmed = (io: socketIO.Server, _message) => {
   try {
     // TODO: confirm funds
     io.emit('funds_confirmed', {

@@ -38,13 +38,13 @@ describe('services/lotus', () => {
     it('checks required funds', async () => {
       const result = await confirmFunds(mock.wallet, mock.requiredFunds, 10)
 
-      expect(result).toEqual(FundsStatus.funds_confirmed)
+      expect(result).toEqual(FundsStatus.FundsConfirmed)
     }, 60000)
 
     it('checks insufficient funds', async () => {
       const result = await confirmFunds(mock.wallet, mock.notEnoughFunds, 10)
 
-      expect(result).toEqual(FundsStatus.error_insufficient_funds)
+      expect(result).toEqual(FundsStatus.ErrorInsufficientFunds)
     }, 60000)
   })
 

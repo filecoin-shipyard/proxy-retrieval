@@ -1,6 +1,6 @@
 import * as socketIO from 'socket.io'
 
-export const sendRetrievalStatusResponse = (io: socketIO.Server, message) => {
+export const sendRetrievalStatusResponse = (io: socketIO.Server, _message) => {
   try {
     // TODO: get status from lotus
 
