@@ -27,8 +27,10 @@ const mock = {
 describe('services/lotus', () => {
   describe('getClientMinerQueryOffer', () => {
     it('returns the availability for a CID', async () => {
-      const { result } = await getClientMinerQueryOffer(mock.miner, mock.cid)
+      const response = await getClientMinerQueryOffer(mock.miner, mock.cid)
+      const { result, error } = response
 
+      expect(error).toBeFalsy()
       expect(result.Err).toEqual('')
       expect(+result.MinPrice).toBeGreaterThanOrEqual(0)
     })
