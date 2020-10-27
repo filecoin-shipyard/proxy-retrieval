@@ -17,14 +17,14 @@ const start = () => {
     logger.log(chalk.greenBright`Got a connection from`, client.id)
 
     client.on('query_cid', (message) => {
-      logger.log(chalk.blueBright`Got a message from`, client.id, 'message:\n', message)
+      logger.log(chalk.blueBright`Got a message query_cid from`, client.id, 'message:\n', message)
 
       const messageJS = toJSCase(message)
       sendCidAvailability(io, messageJS)
     })
 
     client.on('funds_confirmed', (message) => {
-      logger.log(chalk.blueBright`Got a message from`, client.id, 'message:\n', message)
+      logger.log(chalk.blueBright`Got a message funds_confirmed from`, client.id, 'message:\n', message)
       const messageJS = toJSCase(message)
 
       const token = validateAndDecodeToken(messageJS)
@@ -38,6 +38,8 @@ const start = () => {
     })
 
     client.on('chunk_received', (message) => {
+      logger.log(chalk.blueBright`Got a message chunk_received from`, client.id, 'message:\n', message)
+
       const messageJS = toJSCase(message)
       const token = validateAndDecodeToken(messageJS)
 
@@ -51,6 +53,8 @@ const start = () => {
     })
 
     client.on('chunk_resend', async (message) => {
+      logger.log(chalk.blueBright`Got a message chunk_resend from`, client.id, 'message:\n', message)
+
       const messageJS = toJSCase(message)
       const token = validateAndDecodeToken(messageJS)
 
