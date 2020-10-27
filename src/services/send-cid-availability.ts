@@ -1,4 +1,5 @@
 import { AxiosError } from 'axios'
+import BigNumber from 'bignumber.js'
 import * as socketIO from 'socket.io'
 
 import { logger } from './logger'
@@ -10,13 +11,9 @@ const messageType = 'cid_availability'
 export const sendCidAvailability = async (io: socketIO.Server, message) => {
   try {
     const data = await lotus.getClientMinerQueryOffer(message.miner, message.cid)
-    console.log('data', data)
-    console.log('-------')
-
     const isAvailable = !data.result.Err
-    const priceAttofil = data.result.MinPrice
-    // TODO: get wallet
-    const paymentWallet = 'f1stoztiw5sxeyvezjttq5727wfdkooweskpue5fa'
+    const priceAttofil = new BigNumber(data.result.MinPrice).plus(data.result.UnsealPrice)
+    const paymentWallet = await lotus.walletNew()
     const clientToken = createToken(message)
 
     const replyMessage = {
@@ -25,8 +22,8 @@ export const sendCidAvailability = async (io: socketIO.Server, message) => {
       client_token: clientToken,
       available: isAvailable,
 
-      price_attofil: priceAttofil,
-      payment_wallet: paymentWallet,
+      price_attofil: priceAttofil.toString(),
+      payment_wallet: paymentWallet.result,
     }
 
     io.emit(messageType, replyMessage)
