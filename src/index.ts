@@ -23,7 +23,7 @@ const start = () => {
       sendCidAvailability(io, messageJS)
     })
 
-    client.on('funds_confirmed', (message) => {
+    client.on('funds_confirmed', async (message) => {
       logger.log(chalk.blueBright`Got a message funds_confirmed from`, client.id, 'message:\n', message)
       const messageJS = toJSCase(message)
 
@@ -33,7 +33,23 @@ const start = () => {
         return
       }
 
-      sendFundsConfirmed(io, messageJS)
+      // TODO: confirm funds
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        // if funds confirmed
+        // eslint-disable-next-line no-constant-condition
+        if (1) {
+          break
+        }
+
+        await sleep(5000)
+      }
+
+      // TODO: remove
+      await sleep(1000)
+
+      await sendFundsConfirmed(io, messageJS)
+      logger.log(chalk.redBright`----------------------------------`)
       sendChunk(io, messageJS)
     })
 

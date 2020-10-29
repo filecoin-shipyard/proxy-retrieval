@@ -1,3 +1,4 @@
+import * as chalk from 'chalk'
 import * as util from 'util'
 import * as winston from 'winston'
 
@@ -38,6 +39,6 @@ export const logger = {
   error(...args) {
     const params = argsToString(args)
 
-    winstonLogger.error(params.join(' '))
+    winstonLogger.error(chalk.redBright`${params.join(' ')}`)
   },
 }

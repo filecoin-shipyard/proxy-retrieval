@@ -1,40 +1,63 @@
+import * as fs from 'fs-extra'
+import * as readChunk from 'read-chunk'
 import * as socketIO from 'socket.io'
 
-export const sendChunk = (io: socketIO.Server, message) => {
+import { confirmFile, get, updateBytesSent } from './db-clients'
+import { logger } from './logger'
+import * as lotus from './lotus'
+import { sha256 } from './sha256'
+import { sha256File } from './sha256-file'
+
+const chunkSize = 1024 * 102
+
+export const sendChunk = async (io: socketIO.Server, message) => {
   try {
-    // TODO: retrieve file from SM and send in chunks
+    const entry = await get(message)
+    logger.log(`Preparing chunk [token:${message.clientToken}] [cid:${entry.cidRequested}]`)
 
-    const mockChunks = [
-      // valid
-      {
-        message: 'chunk',
-        id: 1,
-        cid: 'bafk2bzacebbhqzi4y546h7gjbduauzha6z33ltequ7hpbvywnttc57xrwcit2',
-        chunk_len_bytes: 5,
-        chunk_sha256: '2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824',
-        full_data_len_bytes: 5, // # example: 1 GiB
-        full_data_sha256: '2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824',
-        chunk_data: 'aGVsbG8=',
-      },
+    // retrieve file if it doesn't exist
+    if (!entry.tempFileChecksum) {
+      // const tempFilePath = await lotus.retrieve(entry.cidRequested, entry.minerRequested, entry.walletAddress)
 
-      // invalid
-      {
-        message: 'chunk',
-        id: 2,
-        cid: 'bafk2bzacebbhqzi4y546h7gjbduauzha6z33ltequ7hpbvywnttc57xrwcit2',
-        chunk_len_bytes: 52428800, // # example: 50 MiB
-        chunk_sha256: '8XvWaZ/iZi2/1Jufgq2MNSwthO1hPH79gIMBKvIfJBw=',
-        full_data_len_bytes: 1073741824, // # example: 1 GiB
-        full_data_sha256: 'G8XZoly6RZecw6HNSUOD4xeO5Sqq/mA33E75i3JkVpg=',
-        chunk_data: 'Qx+tbi3w1eO0aV7JtGjsP[...]InkQMjxgRCGejnBklLq2bnI=',
-      },
-    ]
+      // TODO: temp remove it later
+      const tempFilePath = await lotus.retrieve(
+        'bafk2bzaced7r5ss6665h7d4s4qupduojmiuvmhqoiknmun5mawa3xj2s3lqmq',
+        'f033048',
+        'f1xgvqfhauw3r2cuhjp3n3ajlriwvt6m4lofoh2zy',
+      )
 
-    io.emit(
-      'chunk',
-      mockChunks.find((chunk) => chunk.id === (+message.id || 0) + 1),
-    )
+      const tempFileChecksum = await sha256File(tempFilePath)
+      console.log('message', message)
+      console.log('tempFilePath', tempFilePath)
+      console.log('tempFileChecksum', tempFileChecksum)
+
+      await confirmFile({ ...message, tempFilePath, tempFileChecksum })
+    }
+    ///
+
+    const fileStat = await fs.stat(entry.tempFilePath)
+
+    const startByte = message.id || 0
+    const toByte = startByte + chunkSize
+
+    const chunk = await readChunk(entry.tempFilePath, startByte, toByte)
+
+    const chunkMessage = {
+      message: 'chunk',
+      id: entry.bytesSent,
+      cid: entry.cidRequested,
+      chunk_len_bytes: chunk.length,
+      chunk_sha256: sha256(chunk),
+      full_data_len_bytes: fileStat.size,
+      full_data_sha256: entry.tempFileChecksum,
+      chunk_data: chunk.toString('base64'),
+    }
+
+    io.emit('chunk', chunkMessage)
+
+    await updateBytesSent({ clientToken: entry.clientToken, bytesSent: entry.bytesSent + chunkSize })
   } catch (err) {
+    logger.error(err)
     // TODO: error handling
   }
 }

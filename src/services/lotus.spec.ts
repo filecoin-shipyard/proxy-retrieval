@@ -14,12 +14,12 @@ import {
 
 const mock = {
   cid: 'bafk2bzaced7r5ss6665h7d4s4qupduojmiuvmhqoiknmun5mawa3xj2s3lqmq',
-  dataCid: 'bafk2bzaced7r5ss6665h7d4s4qupduojmiuvmhqoiknmun5mawa3xj2s3lqmq',
   miner: 'f033048',
+
   wallet: 'f1zlclil7vvbhqx5h4wbfevpgc3amhmrtg46dhb7a',
   emptyWallet: 'f1crikx6lnjxwangz5azdkqmpqmj32twrrwr3ncuq',
   retrieveWallet: 'f1xgvqfhauw3r2cuhjp3n3ajlriwvt6m4lofoh2zy',
-  minerID: 'f033048',
+
   requiredFunds: '1000000000000000000',
   notEnoughFunds: '1000000000000000001',
 }
@@ -75,9 +75,9 @@ describe('services/lotus', () => {
     })
   })
 
-  describe('retrieve', () => {
+  fdescribe('retrieve', () => {
     it('returns a file', async () => {
-      const file = await retrieve(mock.dataCid, mock.minerID, mock.retrieveWallet)
+      const file = await retrieve(mock.cid, mock.miner, mock.retrieveWallet)
 
       expect(file).toBeTruthy()
     })

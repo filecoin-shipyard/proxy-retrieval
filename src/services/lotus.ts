@@ -1,13 +1,13 @@
-import axios from 'axios'
 import BigNumber from 'bignumber.js'
 import interval from 'interval-promise'
-import uniqueFilename from 'unique-filename'
+import fetch from 'node-fetch'
+import * as uniqueFilename from 'unique-filename'
 
 import { env } from '../config'
 import { logger } from './logger'
 
 const { api: apiUrl, token, retrievePath } = env.lotus
-const retrieve_timeout = 30 * 60000 // 30 mins
+const retrieveTimeout = 30 * 60000 // 30 mins
 
 export enum FundsStatus {
   FundsConfirmed,
@@ -15,25 +15,25 @@ export enum FundsStatus {
   ErrorPriceChanged,
 }
 
-const api = axios.create({
-  baseURL: apiUrl,
-  headers: {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  },
-})
-
 const callLotus = async (body, timeout = 10000) => {
-  const { data } = await api.post('', body, { timeout })
+  const response = await fetch(apiUrl, {
+    body: JSON.stringify(body),
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    timeout,
+  })
 
-  return data
+  return response.json()
 }
 
 export const version = () => {
   return callLotus({ jsonrpc: '2.0', method: 'Filecoin.Version', params: [], id: 0 })
 }
 
-export const getClientMinerQueryOffer = (miner, dataCid) => {
+export const getClientMinerQueryOffer = (miner: string, dataCid: string) => {
   return callLotus({
     jsonrpc: '2.0',
     method: 'Filecoin.ClientMinerQueryOffer',
@@ -50,7 +50,7 @@ export const getClientRetrieve = (retrievalOffer, outFile) => {
       params: [retrievalOffer, { Path: outFile, IsCAR: false }],
       id: 0,
     },
-    retrieve_timeout,
+    retrieveTimeout,
   )
 }
 
@@ -90,7 +90,7 @@ export const confirmFunds = async (wallet, requiredFunds, iterations = 240): Pro
       }
     },
     5000,
-    { iterations: iterations },
+    { iterations },
   )
 
   return fundsStatus
@@ -136,8 +136,6 @@ export const retrieve = async (dataCid: string, minerID: string, wallet: string)
   try {
     const queryOffer = await queryMinerOffer(dataCid, minerID)
 
-    logger.log('queryOffer:', queryOffer)
-
     if (queryOffer) {
       const retrievalOffer = {
         Root: queryOffer.Root,
@@ -159,11 +157,11 @@ export const retrieve = async (dataCid: string, minerID: string, wallet: string)
 
       if (retrieveResult.error) {
         filePath = undefined
-        throw new Error(retrieveResult.error.message)
+        throw new Error(JSON.stringify(retrieveResult.error))
       }
     }
   } catch (err) {
-    logger.error('Error retrieving file', err)
+    logger.error('Error retrieving file\n', err)
   }
 
   return filePath
