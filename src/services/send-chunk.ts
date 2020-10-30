@@ -8,7 +8,7 @@ import * as lotus from './lotus'
 import { sha256 } from './sha256'
 import { sha256File } from './sha256-file'
 
-const chunkSize = 1024 * 102
+const chunkSize = 1024 // * 1024 * 1 // 1 MB
 
 export const sendChunk = async (io: socketIO.Server, message) => {
   try {
@@ -21,8 +21,8 @@ export const sendChunk = async (io: socketIO.Server, message) => {
 
       // TODO: temp remove it later
       const tempFilePath = await lotus.retrieve(
-        'bafk2bzaced7r5ss6665h7d4s4qupduojmiuvmhqoiknmun5mawa3xj2s3lqmq',
-        'f033048',
+        'bafk2bzacebhlhbcnhmvover42qq5bx773c522skieho6nhtbz7d2ow3f4sw24',
+        'f019243',
         'f1xgvqfhauw3r2cuhjp3n3ajlriwvt6m4lofoh2zy',
       )
 
@@ -57,7 +57,7 @@ export const sendChunk = async (io: socketIO.Server, message) => {
 
     await updateBytesSent({ clientToken: entry.clientToken, bytesSent: entry.bytesSent + chunkSize })
   } catch (err) {
-    logger.error(err)
+    logger.error('Could not send chunk.', err)
     // TODO: error handling
   }
 }

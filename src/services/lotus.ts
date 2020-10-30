@@ -1,7 +1,7 @@
 import axios from 'axios'
 import BigNumber from 'bignumber.js'
 import * as intervalPromise from 'interval-promise'
-import * as uniqueFilename from 'unique-filename'
+import * as path from 'path'
 
 import { env } from '../config'
 import { logger } from './logger'
@@ -151,7 +151,7 @@ export const retrieve = async (dataCid: string, minerID: string, wallet: string)
         Miner: queryOffer.Miner,
         MinerPeer: queryOffer.MinerPeer,
       }
-      filePath = uniqueFilename(retrievePath, 'pr')
+      filePath = path.join(retrievePath, dataCid)
 
       const retrieveResult = await getClientRetrieve(retrievalOffer, filePath)
 

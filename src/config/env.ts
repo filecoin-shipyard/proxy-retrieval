@@ -9,6 +9,8 @@ interface Environment {
   isTest: boolean
   isDevelopment: boolean
 
+  rootDir: string
+
   port: number
 
   lotus: {
@@ -35,6 +37,8 @@ export const env = {
   isProduction: process.env.NODE_ENV === 'production',
   isTest: process.env.NODE_ENV === 'test',
   isDevelopment: process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test',
+
+  rootDir: path.join(path.resolve(__dirname), '../..'),
 
   port: +process.env.PORT || 3000,
 

@@ -75,11 +75,17 @@ describe('services/lotus', () => {
     })
   })
 
-  describe('retrieve', () => {
-    it('returns a file', async () => {
-      const file = await retrieve(mock.cid, mock.miner, mock.retrieveWallet)
+  // Skip: requires to be ran in a machine with private keys
+  // also takes 15 minutes or more to finish
+  xdescribe('retrieve', () => {
+    it(
+      'returns a file',
+      async () => {
+        const file = await retrieve(mock.cid, mock.miner, mock.retrieveWallet)
 
-      expect(file).toBeTruthy()
-    })
+        expect(file).toBeTruthy()
+      },
+      1000 * 60 * 30,
+    )
   })
 })
