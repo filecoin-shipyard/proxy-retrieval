@@ -1,6 +1,6 @@
+import axios from 'axios'
 import BigNumber from 'bignumber.js'
 import interval from 'interval-promise'
-import fetch from 'node-fetch'
 import * as uniqueFilename from 'unique-filename'
 
 import { env } from '../config'
@@ -15,18 +15,18 @@ export enum FundsStatus {
   ErrorPriceChanged,
 }
 
-const callLotus = async (body, timeout = 10000) => {
-  const response = await fetch(apiUrl, {
-    body: JSON.stringify(body),
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    timeout,
-  })
+const api = axios.create({
+  baseURL: apiUrl,
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  },
+})
 
-  return response.json()
+const callLotus = async (body, timeout = 10000) => {
+  const { data } = await api.post('', body, { timeout })
+
+  return data
 }
 
 export const version = () => {

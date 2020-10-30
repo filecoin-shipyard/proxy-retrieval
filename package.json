@@ -32,7 +32,6 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.6",
     "knex-stringcase": "^1.4.3",
-    "node-fetch": "^2.6.1",
     "pg": "^8.4.1",
     "read-chunk": "^3.2.0",
     "socket.io": "^2.3.0",
