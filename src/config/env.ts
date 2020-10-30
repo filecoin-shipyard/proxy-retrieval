@@ -17,6 +17,7 @@ interface Environment {
     api: string
     token: string
     retrievePath: string
+    retrievePathLocal: string
   }
 
   db: {
@@ -46,6 +47,11 @@ export const env = {
     api: process.env.LOTUS_API,
     token: process.env.LOTUS_TOKEN,
     retrievePath: process.env.LOTUS_RETRIEVE,
+
+    /**
+     * Can be used to overwrite the local retrieve path.
+     */
+    retrievePathLocal: process.env.LOTUS_RETRIEVE_LOCAL || process.env.LOTUS_RETRIEVE,
   },
 
   db: {
