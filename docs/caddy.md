@@ -28,6 +28,18 @@ $ sudo useradd --system \
 
 ```
 https://domain {
+  @options {
+        method OPTIONS
+  }
+
+  handle @options {
+        header Access-Control-Allow-Origin *
+        header Access-Control-Allow-Headers *
+        header Access-Control-Request-Method *
+        header Access-Control-Allow-Credentials true
+        respond 204
+  }
+
   log
   route * {
    reverse_proxy /* :1234
