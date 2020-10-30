@@ -1,6 +1,6 @@
 import axios from 'axios'
 import BigNumber from 'bignumber.js'
-import interval from 'interval-promise'
+import * as intervalPromise from 'interval-promise'
 import * as uniqueFilename from 'unique-filename'
 
 import { env } from '../config'
@@ -8,6 +8,8 @@ import { logger } from './logger'
 
 const { api: apiUrl, token, retrievePath } = env.lotus
 const retrieveTimeout = 30 * 60000 // 30 mins
+
+const interval = (intervalPromise as any) as typeof intervalPromise.default
 
 export enum FundsStatus {
   FundsConfirmed,
