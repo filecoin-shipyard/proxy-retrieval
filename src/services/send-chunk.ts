@@ -1,3 +1,4 @@
+import * as chalk from 'chalk'
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import * as readChunk from 'read-chunk'
@@ -10,7 +11,7 @@ import * as lotus from './lotus'
 import { sha256 } from './sha256'
 import { sha256File } from './sha256-file'
 
-const chunkSize = 1024 // * 1024 * 1 // 1 MB
+const chunkSize = 1024 * 2 // * 1024 * 1 // 1 MB
 
 export const sendChunk = async (io: socketIO.Server, message) => {
   try {
@@ -30,11 +31,9 @@ export const sendChunk = async (io: socketIO.Server, message) => {
     const fileStat = await fs.stat(filePath)
 
     const startByte = message.id || 0
-    const toByte = startByte + chunkSize
+    const sizeToRead = startByte + chunkSize > fileStat.size ? fileStat.size - startByte : chunkSize
 
-    const chunk = await readChunk(filePath, startByte, toByte)
-
-    if (!chunk || !chunk.length) {
+    if (startByte >= fileStat.size) {
       // send "EOF"
       io.emit('chunk', {
         message: 'chunk',
@@ -46,9 +45,14 @@ export const sendChunk = async (io: socketIO.Server, message) => {
       return
     }
 
+    logger.log(chalk.blueBright`Reading from ${startByte} to ${startByte + sizeToRead} (chunk size: ${sizeToRead})`)
+    const chunk = await readChunk(filePath, startByte, sizeToRead)
+
+    const bytesSent = entry.bytesSent + sizeToRead > fileStat.size ? fileStat.size : entry.bytesSent + sizeToRead
+
     const chunkMessage = {
       message: 'chunk',
-      id: entry.bytesSent,
+      id: bytesSent,
       cid: entry.cidRequested,
       chunk_len_bytes: chunk.length,
       chunk_sha256: sha256(chunk),
@@ -59,7 +63,7 @@ export const sendChunk = async (io: socketIO.Server, message) => {
 
     io.emit('chunk', chunkMessage)
 
-    await updateBytesSent({ clientToken: entry.clientToken, bytesSent: entry.bytesSent + chunkSize })
+    await updateBytesSent({ clientToken: entry.clientToken, bytesSent })
   } catch (err) {
     logger.error('Could not send chunk.', err)
     // TODO: error handling
