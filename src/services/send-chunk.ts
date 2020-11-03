@@ -35,6 +35,14 @@ export const sendChunk = async (io: socketIO.Server, message) => {
     const chunk = await readChunk(filePath, startByte, toByte)
 
     if (!chunk || !chunk.length) {
+      // send "EOF"
+      io.emit('chunk', {
+        message: 'chunk',
+        eof: true,
+        cid: message.cid,
+        full_data_len_bytes: fileStat.size,
+      })
+
       return
     }
 
