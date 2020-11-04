@@ -8,6 +8,7 @@ import * as lotus from './lotus'
 import { createToken } from './token'
 
 const messageType = 'cid_availability'
+const gasCostPerProxyRetrieval = new BigNumber('32803602238')
 
 export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket, message) => {
   try {
@@ -24,8 +25,9 @@ export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket,
       cid: message.cid,
       client_token: clientToken,
       available: isAvailable,
+      approxSize: data.result.Size,
 
-      price_attofil: priceAttofil.toString(),
+      price_attofil: priceAttofil.plus(gasCostPerProxyRetrieval).toString(),
       payment_wallet: paymentWallet.result,
     }
 
