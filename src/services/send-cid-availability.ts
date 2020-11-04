@@ -9,7 +9,7 @@ import { createToken } from './token'
 
 const messageType = 'cid_availability'
 
-export const sendCidAvailability = async (io: socketIO.Server, message) => {
+export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket, message) => {
   try {
     logger.log(`Getting CID availability [token:${message.clientToken}] [cid:${message.cid}]`)
 

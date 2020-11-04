@@ -20,7 +20,7 @@ const start = () => {
       logger.log(chalk.blueBright`Got a message query_cid from`, client.id, 'message:\n', message)
 
       const messageJS = toJSCase(message)
-      sendCidAvailability(io, messageJS)
+      sendCidAvailability(client, messageJS)
     })
 
     client.on('funds_confirmed', async (message) => {
@@ -48,9 +48,9 @@ const start = () => {
       // TODO: remove
       await sleep(1000)
 
-      await sendFundsConfirmed(io, messageJS)
+      await sendFundsConfirmed(client, messageJS)
       logger.log(chalk.redBright`----------------------------------`)
-      sendChunk(io, messageJS)
+      sendChunk(client, messageJS)
     })
 
     client.on('chunk_received', (message) => {
@@ -65,7 +65,7 @@ const start = () => {
 
       // TODO: send next chunk if any
       logger.log(chalk.blueBright`Client got the chunk`, messageJS.id)
-      sendChunk(io, messageJS)
+      sendChunk(client, messageJS)
     })
 
     client.on('chunk_resend', async (message) => {
@@ -82,7 +82,7 @@ const start = () => {
       logger.log(chalk.yellowBright`Client is asking to resend chunk`, messageJS.id)
 
       await sleep(3000)
-      sendChunk(io, { ...messageJS, id: messageJS.id - 1 })
+      sendChunk(client, { ...messageJS, id: messageJS.id - 1 })
     })
 
     client.on('disconnect', async (...args) => {

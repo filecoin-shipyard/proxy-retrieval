@@ -13,7 +13,7 @@ import { sha256File } from './sha256-file'
 
 const chunkSize = 1024 // * 1024 * 1 // 1 MB
 
-export const sendChunk = async (io: socketIO.Server, message) => {
+export const sendChunk = async (io: socketIO.Server | socketIO.Socket, message) => {
   try {
     const entry = await get(message)
     logger.log(`Preparing chunk [token:${message.clientToken}] [cid:${entry.cidRequested}]`)

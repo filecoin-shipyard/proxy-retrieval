@@ -3,7 +3,7 @@ import * as socketIO from 'socket.io'
 import { confirmFunds } from './db-clients'
 import { logger } from './logger'
 
-export const sendFundsConfirmed = async (io: socketIO.Server, message) => {
+export const sendFundsConfirmed = async (io: socketIO.Server | socketIO.Socket, message) => {
   try {
     logger.log(`Registering funds confirmed [token:${message.clientToken}] [cid:${message.cid}]`)
     await confirmFunds(message)
