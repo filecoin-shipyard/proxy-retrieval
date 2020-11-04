@@ -8,6 +8,11 @@ import * as lotus from './lotus'
 import { createToken } from './token'
 
 const messageType = 'cid_availability'
+// 0.00000003280361043
+// 0.00000101
+
+// 1010000000000
+const TEMPgasCostPerProxyRetrieval = new BigNumber('1010000000000')
 const gasCostPerProxyRetrieval = new BigNumber('32803602238')
 
 export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket, message) => {
@@ -27,7 +32,7 @@ export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket,
       available: isAvailable,
       approxSize: data.result.Size,
 
-      price_attofil: priceAttofil.plus(gasCostPerProxyRetrieval).toString(),
+      price_attofil: priceAttofil.plus(gasCostPerProxyRetrieval).plus(TEMPgasCostPerProxyRetrieval).toString(),
       payment_wallet: paymentWallet.result,
     }
 
