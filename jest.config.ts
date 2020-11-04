@@ -8,6 +8,7 @@ const config: Config.InitialOptions = {
   clearMocks: true,
   preset: 'ts-jest',
   testEnvironment: 'node',
+  testTimeout: 15000,
 }
 
 export default config

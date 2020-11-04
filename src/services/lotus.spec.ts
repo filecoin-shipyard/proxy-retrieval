@@ -9,12 +9,12 @@ import {
 } from './lotus'
 
 // CIDs
-// bafk2bzaced7r5ss6665h7d4s4qupduojmiuvmhqoiknmun5mawa3xj2s3lqmq
+// bafk2bzacebhlhbcnhmvover42qq5bx773c522skieho6nhtbz7d2ow3f4sw24
 // bafykbzacecdt3sxmqj2xi6ntatf4ikycu6korkyv3pd632zot64lah5oonftw
 
 const mock = {
-  cid: 'bafk2bzaced7r5ss6665h7d4s4qupduojmiuvmhqoiknmun5mawa3xj2s3lqmq',
-  miner: 'f033048',
+  cid: 'bafk2bzacebhlhbcnhmvover42qq5bx773c522skieho6nhtbz7d2ow3f4sw24',
+  miner: 'f019243',
 
   wallet: 'f1zlclil7vvbhqx5h4wbfevpgc3amhmrtg46dhb7a',
   emptyWallet: 'f1crikx6lnjxwangz5azdkqmpqmj32twrrwr3ncuq',
