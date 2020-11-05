@@ -81,7 +81,8 @@ describe('services/lotus', () => {
     it(
       'returns a file',
       async () => {
-        const file = await retrieve(mock.cid, mock.miner, mock.retrieveWallet)
+        const outPath = `./test-result-${mock.cid}`
+        const file = await retrieve(mock.cid, mock.miner, mock.retrieveWallet, outPath)
 
         expect(file).toBeTruthy()
       },
