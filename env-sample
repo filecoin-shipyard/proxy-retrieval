@@ -1,0 +1,17 @@
+#
+# .env file
+# 
+# Fill in <blanks> file and name as `.env` in repo root
+#
+LOTUS_API=http://127.0.0.1:1234/rpc/v0
+LOTUS_TOKEN=<lotus API token>
+LOTUS_RETRIEVE=files
+
+DB_HOST=<hostname>
+DB_USER=<username>
+DB_PASS=<password>
+DB_NAME=<database name>
+
+TOKEN_SECRET=<put a random 32-character seed string here>
+TOKEN_EXPIRES_IN=7 days
+

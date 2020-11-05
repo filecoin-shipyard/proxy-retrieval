@@ -20,8 +20,16 @@ export const sendChunk = async (io: socketIO.Server | socketIO.Socket, message) 
 
     // retrieve file if it doesn't exist
     const filePath = path.join(env.rootDir, env.lotus.retrievePathLocal, entry.cidRequested)
+    logger.log(`Looking for ${entry.cidRequested} locally at '${filePath}'`)
+    logger.log(`  env.rootDir: '${env.rootDir}'`)
+    logger.log(`  env.lotus.retrievePathLocal: '${env.lotus.retrievePathLocal}'`)
     if (!fs.existsSync(filePath)) {
-      await lotus.retrieve(entry.cidRequested, entry.minerRequested, entry.walletAddress)
+      logger.log(
+        `Did not find ${entry.cidRequested} locally; performing storage miner retrieve from ${entry.minerRequested} instead`,
+      )
+      await lotus.retrieve(entry.cidRequested, entry.minerRequested, entry.walletAddress, filePath)
+    } else {
+      logger.log(`Found ${entry.cidRequested} locally; no storage miner retrieval needed`)
     }
 
     const tempFileChecksum = await sha256File(filePath)

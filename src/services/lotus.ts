@@ -5,7 +5,7 @@ import * as intervalPromise from 'interval-promise'
 import { env } from '../config'
 import { logger } from './logger'
 
-const { api: apiUrl, token, retrievePath } = env.lotus
+const { api: apiUrl, token, _retrievePath } = env.lotus
 const retrieveTimeout = 30 * 60000 // 30 mins
 
 const interval = (intervalPromise as any) as typeof intervalPromise.default
@@ -131,8 +131,9 @@ export const getCIDAvailability = async (dataCid, minerID) => {
   return result
 }
 
-export const retrieve = async (dataCid: string, minerID: string, wallet: string) => {
-  let filePath: string
+// TODO: this no longer needs to return the filepath since we pass it in
+export const retrieve = async (dataCid: string, minerID: string, wallet: string, outFilePath: string) => {
+  logger.log(`retrieve:  dataCid:${dataCid}, minerID:'${minerID}', wallet:'${wallet}', outFilePath:'${outFilePath}'`)
 
   try {
     const queryOffer = await queryMinerOffer(dataCid, minerID)
@@ -150,14 +151,13 @@ export const retrieve = async (dataCid: string, minerID: string, wallet: string)
         Miner: queryOffer.Miner,
         MinerPeer: queryOffer.MinerPeer,
       }
-      filePath = `${retrievePath.replace(/\/$/, '')}/${dataCid}`
 
-      const retrieveResult = await getClientRetrieve(retrievalOffer, filePath)
+      const retrieveResult = await getClientRetrieve(retrievalOffer, outFilePath)
 
       logger.log('retrieve result: ', retrieveResult)
 
       if (retrieveResult.error) {
-        filePath = undefined
+        outFilePath = undefined
         throw new Error(JSON.stringify(retrieveResult.error))
       }
     }
@@ -165,5 +165,5 @@ export const retrieve = async (dataCid: string, minerID: string, wallet: string)
     logger.error('Error retrieving file\n', err)
   }
 
-  return filePath
+  return outFilePath
 }
