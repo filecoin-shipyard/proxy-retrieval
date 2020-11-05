@@ -5,7 +5,7 @@ import * as intervalPromise from 'interval-promise'
 import { env } from '../config'
 import { logger } from './logger'
 
-const { api: apiUrl, token, _retrievePath } = env.lotus
+const { api: apiUrl, token } = env.lotus
 const retrieveTimeout = 30 * 60000 // 30 mins
 
 const interval = (intervalPromise as any) as typeof intervalPromise.default
