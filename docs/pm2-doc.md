@@ -23,4 +23,7 @@ $ pm2 restart "app name"
 
 To stop your app.
 $ pm2 delete "app name"
+
+To see pm2 logs
+$ pm2 logs
 ```
