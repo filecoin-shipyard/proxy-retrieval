@@ -11,7 +11,7 @@ import * as lotus from './lotus'
 import { sha256 } from './sha256'
 import { sha256File } from './sha256-file'
 
-const chunkSize = 1024 // * 1024 * 1 // 1 MB
+const chunkSize = 1048576 // 1 MiB
 
 export const sendChunk = async (io: socketIO.Server | socketIO.Socket, message) => {
   try {
