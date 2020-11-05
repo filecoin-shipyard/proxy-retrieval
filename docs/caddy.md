@@ -42,7 +42,7 @@ https://domain {
 
   log
   route * {
-   reverse_proxy /* :1234
+   reverse_proxy /* :3000
   }
 }
 ```
