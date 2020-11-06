@@ -47,7 +47,8 @@ export const sendChunk = async (io: socketIO.Server | socketIO.Socket, message) 
         message: 'chunk',
         eof: true,
         cid: message.cid,
-        full_data_len_bytes: fileStat.size,
+        fullDataLenBytes: fileStat.size,
+        clientToken: message.clientToken,
       })
 
       return
@@ -62,11 +63,12 @@ export const sendChunk = async (io: socketIO.Server | socketIO.Socket, message) 
       message: 'chunk',
       id: bytesSent,
       cid: entry.cidRequested,
-      chunk_len_bytes: chunk.length,
-      chunk_sha256: sha256(chunk),
-      full_data_len_bytes: fileStat.size,
-      full_data_sha256: entry.tempFileChecksum,
-      chunk_data: chunk.toString('base64'),
+      chunkLenBytes: chunk.length,
+      chunkSha256: sha256(chunk),
+      fullDataLenBytes: fileStat.size,
+      fullDataSha256: entry.tempFileChecksum,
+      chunkData: chunk.toString('base64'),
+      clientToken: message.clientToken,
     }
 
     io.emit('chunk', chunkMessage)

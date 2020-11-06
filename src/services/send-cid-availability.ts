@@ -24,15 +24,15 @@ export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket,
     const replyMessage = {
       message: messageType,
       cid: message.cid,
-      client_token: clientToken,
+      clientToken,
       available: isAvailable,
       approxSize: data.result.Size,
 
-      price_attofil: priceAttofil
+      priceAttofil: priceAttofil
         .plus(gasCostPerProxyRetrieval)
         .plus(minimunPriceForRetrievalPerGb.times(10))
         .toString(),
-      payment_wallet: paymentWallet.result,
+      paymentWallet: paymentWallet.result,
     }
 
     if (isAvailable) {
@@ -41,7 +41,7 @@ export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket,
       await registerClient({
         cidRequested: message.cid,
         minerRequested: message.miner,
-        clientToken: clientToken,
+        clientToken,
         priceAttofil: priceAttofil.toString(),
         walletAddress: paymentWallet.result,
         walletPrivateKey: '// TODO: do we need this?',
@@ -57,6 +57,7 @@ export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket,
       message: messageType,
       cid: message.cid,
       available: false,
+      clientToken: message.clientToken,
     })
   }
 }
