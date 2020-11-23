@@ -9,7 +9,7 @@ import { createToken } from './token'
 
 const messageType = 'cid_availability'
 // to Retrieve from miner wallet need 0.1 minimum balance
-const minimumPriceForRetrievalPerGb = new BigNumber('10100000000000')
+const minimumPriceForRetrievalPerGb = new BigNumber('10100000000000') //10100000000000000
 const gasCostPerProxyRetrieval = new BigNumber('32803602238')
 
 export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket, message) => {
@@ -28,7 +28,7 @@ export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket,
       cid: message.cid,
       clientToken,
       available: isAvailable,
-      approxSize: size.dividedBy(2).toString(),
+      approxSize: size.dividedBy(2).toNumber(),
 
       priceAttofil: priceAttofil
         .plus(gasCostPerProxyRetrieval)
