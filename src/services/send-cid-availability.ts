@@ -9,7 +9,7 @@ import { createToken } from './token'
 
 const messageType = 'cid_availability'
 // to Retrieve from miner wallet need 0.1 minimum balance
-const minimumPriceForRetrievalPerGb = new BigNumber('10100000000000000')
+const minimumPriceForRetrievalPerGb = new BigNumber('10100000000000')
 const gasCostPerProxyRetrieval = new BigNumber('32803602238')
 
 export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket, message) => {
@@ -21,13 +21,14 @@ export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket,
     const priceAttofil = new BigNumber(data.result.MinPrice).plus(data.result.UnsealPrice)
     const paymentWallet = await lotus.walletNew()
     const clientToken = createToken(message)
+    const size = new BigNumber(data.result.Size)
 
     const replyMessage = {
       message: messageType,
       cid: message.cid,
       clientToken,
       available: isAvailable,
-      approxSize: data.result.Size,
+      approxSize: size.dividedBy(2).toString(),
 
       priceAttofil: priceAttofil
         .plus(gasCostPerProxyRetrieval)
