@@ -11,7 +11,9 @@ import { sleep } from './services/sleep'
 import { validateAndDecodeToken } from './services/token'
 
 const start = () => {
-  const io = socketIO()
+  const io = socketIO({
+    pingTimeout: 60000, // 1 minute without a pong packet to consider the connection closed
+  })
 
   io.on('connection', (client) => {
     logger.log(chalk.greenBright`Got a connection from`, client.id)
