@@ -3,14 +3,20 @@ import * as socketIO from 'socket.io'
 
 import { env } from './config'
 import { toJSCase } from './services/case'
+import { startDb } from './services/database'
+import { get } from './services/db-clients'
 import { logger } from './services/logger'
+import { confirmFunds, FundsStatus } from './services/lotus'
 import { sendChunk } from './services/send-chunk'
 import { sendCidAvailability } from './services/send-cid-availability'
 import { sendFundsConfirmed } from './services/send-funds-confirmed'
+import { sendFundsInsufficientFunds } from './services/send-funds-insufficient-funds'
 import { sleep } from './services/sleep'
 import { validateAndDecodeToken } from './services/token'
 
-const start = () => {
+const start = async () => {
+  await startDb()
+
   const io = socketIO({
     pingTimeout: 60000, // 1 minute without a pong packet to consider the connection closed
   })
@@ -35,24 +41,23 @@ const start = () => {
         return
       }
 
-      // TODO: confirm funds
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
-        // if funds confirmed
-        // eslint-disable-next-line no-constant-condition
-        if (1) {
+      const entry = await get(message)
+      const { status, balance } = await confirmFunds(entry.walletAddress, entry.priceAttofil)
+
+      switch (status) {
+        case FundsStatus.FundsConfirmed:
+          await sendFundsConfirmed(client, messageJS)
+          sendChunk(client, messageJS)
           break
-        }
 
-        await sleep(5000)
+        case FundsStatus.ErrorInsufficientFunds:
+          await sendFundsInsufficientFunds(client, messageJS, entry, balance)
+          break
+
+        case FundsStatus.ErrorPriceChanged:
+          // TODO: FundsStatus.ErrorPriceChanged
+          break
       }
-
-      // TODO: remove
-      await sleep(1000)
-
-      await sendFundsConfirmed(client, messageJS)
-      logger.log(chalk.redBright`----------------------------------`)
-      sendChunk(client, messageJS)
     })
 
     client.on('chunk_received', (message) => {

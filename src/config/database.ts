@@ -7,6 +7,7 @@ export const tables = {
   clients: 'clients',
 }
 
+// paths must be relative to knexfile.ts
 export const database = {
   client: 'postgresql',
   connection: {
