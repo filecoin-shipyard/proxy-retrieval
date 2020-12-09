@@ -17,11 +17,18 @@ export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket,
     logger.log(`Getting CID availability [token:${message.clientToken}] [cid:${message.cid}]`)
 
     const data = await lotus.getClientMinerQueryOffer(message.miner, message.cid)
+    logger.log('getClientMinerQueryOffer() =>\n', data)
+
     const isAvailable = !data.result.Err
     const priceAttofil = new BigNumber(data.result.MinPrice).plus(data.result.UnsealPrice)
     const paymentWallet = await lotus.walletNew()
     const clientToken = createToken(message)
     const size = new BigNumber(data.result.Size)
+
+    const priceWithGas = priceAttofil
+      .plus(gasCostPerProxyRetrieval)
+      .plus(minimumPriceForRetrievalPerGb.times(10))
+      .toString()
 
     const replyMessage = {
       message: messageType,
@@ -30,10 +37,7 @@ export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket,
       available: isAvailable,
       approxSize: size.dividedBy(2).toNumber(),
 
-      priceAttofil: priceAttofil
-        .plus(gasCostPerProxyRetrieval)
-        .plus(minimumPriceForRetrievalPerGb.times(10))
-        .toString(),
+      priceAttofil: priceWithGas,
       paymentWallet: paymentWallet.result,
     }
 
@@ -44,7 +48,7 @@ export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket,
         cidRequested: message.cid,
         minerRequested: message.miner,
         clientToken,
-        priceAttofil: priceAttofil.toString(),
+        priceAttofil: priceWithGas,
         walletAddress: paymentWallet.result,
         walletPrivateKey: '// TODO: do we need this?',
       })

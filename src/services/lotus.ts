@@ -1,5 +1,6 @@
 import axios from 'axios'
 import BigNumber from 'bignumber.js'
+import * as chalk from 'chalk'
 import * as intervalPromise from 'interval-promise'
 
 import { env } from '../config'
@@ -25,7 +26,15 @@ const api = axios.create({
 })
 
 const callLotus = async (body, timeout = 10000) => {
+  // logger.log(chalk.blueBright`callLotus() request:\n`, body)
   const { data } = await api.post('', body, { timeout })
+
+  if (data.result?.Err) {
+    logger.error(chalk.redBright`callLotus():`, data.result.Err)
+  }
+  // else {
+  //   logger.log(chalk.greenBright`callLotus() result:\n`, data)
+  // }
 
   return data
 }
@@ -74,18 +83,24 @@ export const createWallet = async (): Promise<string> => {
   return wallet.result
 }
 
-export const confirmFunds = async (wallet, requiredFunds, iterations = 240): Promise<FundsStatus> => {
+export const confirmFunds = async (
+  wallet,
+  requiredFunds,
+  iterations = 240,
+): Promise<{ status: FundsStatus; balance: string }> => {
   const requiredFundsBN = new BigNumber(requiredFunds)
-  let fundsStatus = FundsStatus.ErrorInsufficientFunds
+  let status = FundsStatus.ErrorInsufficientFunds
+  let balance
 
   // iterate for 20 minutes, waiting 5 seconds before each iteration
   await interval(
     async (_iteration, stop) => {
-      const balance = await walletBalance(wallet)
-      if (balance) {
-        const balanceBN = new BigNumber(balance.result)
+      const { result } = await walletBalance(wallet)
+      balance = result
+      if (result) {
+        const balanceBN = new BigNumber(result)
         if (balanceBN.comparedTo(requiredFundsBN) == 1 || balanceBN.comparedTo(requiredFundsBN) == 0) {
-          fundsStatus = FundsStatus.FundsConfirmed
+          status = FundsStatus.FundsConfirmed
           stop()
         }
       }
@@ -94,7 +109,10 @@ export const confirmFunds = async (wallet, requiredFunds, iterations = 240): Pro
     { iterations },
   )
 
-  return fundsStatus
+  return {
+    status,
+    balance,
+  }
 }
 
 export const queryMinerOffer = async (dataCid, minerID) => {
