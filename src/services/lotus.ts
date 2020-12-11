@@ -44,12 +44,15 @@ export const version = () => {
 }
 
 export const getClientMinerQueryOffer = (miner: string, dataCid: string) => {
-  return callLotus({
-    jsonrpc: '2.0',
-    method: 'Filecoin.ClientMinerQueryOffer',
-    params: [miner, { '/': dataCid }, null],
-    id: 0,
-  })
+  return callLotus(
+    {
+      jsonrpc: '2.0',
+      method: 'Filecoin.ClientMinerQueryOffer',
+      params: [miner, { '/': dataCid }, null],
+      id: 0,
+    },
+    300000,
+  )
 }
 
 export const getClientRetrieve = (retrievalOffer, outFile) => {
