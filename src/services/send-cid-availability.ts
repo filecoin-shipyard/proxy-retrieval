@@ -21,7 +21,9 @@ export const sendCidAvailability = async (io: socketIO.Server | socketIO.Socket,
 
     const isAvailable = !data.result.Err
     const priceAttofil = new BigNumber(data.result.MinPrice).plus(data.result.UnsealPrice)
-    const paymentWallet = await lotus.walletNew()
+    // const paymentWallet = await lotus.walletNew()
+    // JUST FOR TESTING!! Use same wallet for all transfers (TO BE REMOVED)
+    const paymentWallet = { result: 'f1xgvqfhauw3r2cuhjp3n3ajlriwvt6m4lofoh2zy' }
     const clientToken = createToken(message)
     const size = new BigNumber(data.result.Size)
 
