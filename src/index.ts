@@ -22,7 +22,7 @@ const start = async () => {
   })
 
   io.on('connection', (client) => {
-    logger.log(chalk.greenBright`Got a connection from test`, client.id)
+    logger.log(chalk.greenBright`Got a connection from`, client.id)
 
     client.on('query_cid', (message) => {
       logger.log(chalk.blueBright`Got a message query_cid from`, client.id, 'message:\n', message)
